@@ -1,0 +1,28 @@
+# logs
+npm-debug.log
+
+# dev
+*.sqlite
+
+# files deployed
+*.zip
+*.tgz
+
+# env files
+.env.development.local*
+.env.development.lp.local*
+.env.production.*
+
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
+.serverless
+
+.tmp
+
+*.csv
+/cdkStack/BPCE/*
+/cdkStack/BPCE-api/*
+
+!dev-agents-cecaz.csv

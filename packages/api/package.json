@@ -1,0 +1,15 @@
+{
+	"name": "api",
+	"version": "0.0.1",
+	"description": "API for MBDS 2024 project",
+	"main": "index.js",
+	"license": "MIT",
+	"private": true,
+	"dependencies": {
+		"cors": "^2.8.5",
+		"express": "^4.18.2"
+	},
+	"scripts": {
+		"start": "node index.js --watch"
+	}
+}
