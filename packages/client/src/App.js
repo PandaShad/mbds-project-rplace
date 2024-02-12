@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import logo from './logo.svg';
-
 import './App.css';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Header from './components/Header/Header';
 
 const { REACT_APP_API_URL } = process.env;
 
@@ -31,6 +32,7 @@ function App() {
 	};
 	return (
 		<div className="App">
+			<Header />
 			<header className="App-header">
 				<img src={logo} className="App-logo" alt="logo" />
 				<p>
