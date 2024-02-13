@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { Button } from "reactstrap";
-import logo from '../../logo.png'
+import logo from '../../images/logo.png'
+import logo2 from '../../images/logo2.png'
+import "./header.css";
 import {
 	Collapse,
 	Navbar,
@@ -23,19 +25,22 @@ function Header(args) {
 
 	return (
 		<div>
-			<Navbar {...args} expand="md" dark color="dark">
+			<Navbar {...args} expand="md"  color="dark">
 				<NavbarBrand href="/" >
-					<img alt="Logo" src={logo} className="logo-image" />
+					<div className="logo-container">
+					<img alt="Logo" src={logo} className="logo-image "/>
+					<img alt="Logo" src={logo2} className="logo-image ms-1" />
+					</div>
 				</NavbarBrand>
 				<NavbarToggler onClick={toggle} />
 				<Collapse isOpen={isOpen} navbar>
-					<Nav className="m-auto" navbar>
+					<Nav className="me-auto" navbar>
 						<NavItem>
-							<NavLink href="/components/">Components</NavLink>
+							<NavLink href="/components/">Explorer Boards</NavLink>
 						</NavItem>
 						<NavItem>
 							<NavLink href="https://github.com/reactstrap/reactstrap">
-								GitHub
+								Mes Boards
 							</NavLink>
 						</NavItem>
 					</Nav>
