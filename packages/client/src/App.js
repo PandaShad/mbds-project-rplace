@@ -1,51 +1,31 @@
-import { useState } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Header from './components/Header/Header';
+import Navbar  from './components/navbar/Navbar';
+import Home from './components/homePage/Home';
+import Login from './components/loginPage/Login';
+import SignIn from './components/signIn/SignIn';
+import MyProfile from './components/myProfile/MyProfile';
+import PixelBoards from './components/pixelBoards/PixelBoards';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useAuth } from './contexts/AuthContext';
 
-const { REACT_APP_API_URL } = process.env;
+
 
 function App() {
-	const [resp, setResp] = useState(null);
-	const [error, setError] = useState(null);
-	const [loading, setLoading] = useState(null);
+	const { isAuthenticated } = useAuth();
 
-	const handleClickTest = async () => {
-		console.log('REACT_APP_API_URL', REACT_APP_API_URL);
-		setError(null);
-		setResp(null);
-		setLoading(true);
-		await fetch(REACT_APP_API_URL)
-			.then((response) => !console.log(response) && response.json())
-			.then((data) => {
-				console.log(data);
-				setResp(data);
-			})
-			.catch((err) => {
-				console.error('err:', err);
-				setError(error);
-			})
-			.finally(() => {
-				setLoading(false);
-			});
-	};
 	return (
-		<div className="App">
-			<Header />
-			<header className="App-header">
-				<img src={logo} className="App-logo" alt="logo" />
-				<p>
-					Project MBDS 2024 - SKELETON
-				</p>
-				<br />
-				<button type="button" onClick={handleClickTest}>Call API for test</button>
-				{loading && <p>loading...</p>}
-				{resp && <p>ok = {resp}</p>}
-				{error && <p>error = {error}</p>}
-			</header>
-		</div>
+	  <Router>
+		<Navbar />
+		<Routes>
+		  <Route path="/" element={<Home />} />
+		  <Route path="/login" element={isAuthenticated ? <Navigate to="/myprofile" /> : <Login />} />
+		  <Route path="/signin" element={isAuthenticated ? <Navigate to="/myprofile" /> : <SignIn />} />
+		  <Route path="/myprofile" element={isAuthenticated ? <MyProfile /> : <Navigate to="/login" />} />
+		  <Route path="/pixelboards" element={isAuthenticated ? <PixelBoards /> : <Navigate to="/login" />} />
+		</Routes>
+	  </Router>
 	);
-}
+  }
 
 export default App;
