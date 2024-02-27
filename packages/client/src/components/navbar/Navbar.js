@@ -37,10 +37,10 @@ function NavbarCompenant(args) {
 				<Collapse isOpen={isOpen} navbar>
 					<Nav className="me-auto" navbar>
 						<NavItem>
-							<NavLink href="/components/">Explorer Boards</NavLink>
+							<NavLink href="/">Explorer Boards</NavLink>
 						</NavItem>
 						<NavItem>
-							<NavLink href="https://github.com/reactstrap/reactstrap">
+							<NavLink href="/">
 								Mes Boards
 							</NavLink>
 						</NavItem>
