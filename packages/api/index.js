@@ -6,12 +6,11 @@ const api = require('./api');
 const app = express();
 const port = 8000;
 
+app.use(cors()); //autorise le CORS
 app.use(express.json());
 
-app.use(cors()); //autorise le CORS
-
 app.get('/', (req, res) => { // GET SUR localhost:8000/
-	res.send('Hello World!');
+	res.json('Hello World!');
 });
 
 app.use('/api', api);
