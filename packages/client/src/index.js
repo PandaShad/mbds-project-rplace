@@ -6,6 +6,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './contexts/AuthContext';
+import { DarkModeProvider } from './contexts/DarkModeContext';
 
 // eslint-disable-next-line no-undef
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -13,7 +14,9 @@ root.render(
 	<ChakraProvider>
 		<React.StrictMode>
 			<AuthProvider>
-				<App />
+				<DarkModeProvider>
+					<App />
+				</DarkModeProvider>
 			</AuthProvider>
 		</React.StrictMode>
 	</ChakraProvider>,
