@@ -6,7 +6,7 @@ import {
 import Navbar from './components/navbar/Navbar';
 import Home from './components/homePage/Home';
 import Login from './components/loginPage/Login';
-import SignIn from './components/signIn/SignIn';
+import SignUp from './components/signUp/SignUp';
 import MyProfile from './components/myProfile/MyProfile';
 import { useAuth } from './contexts/AuthContext';
 
@@ -19,7 +19,7 @@ function App() {
 			<Routes>
 				<Route path="/" element={<Home />} />
 				<Route path="/login" element={isAuthenticated ? <Navigate to="/myprofile" /> : <Login />} />
-				<Route path="/signin" element={isAuthenticated ? <Navigate to="/myprofile" /> : <SignIn />} />
+				<Route path="/signin" element={isAuthenticated ? <Navigate to="/myprofile" /> : <SignUp />} />
 				<Route path="/myprofile" element={isAuthenticated ? <MyProfile /> : <Navigate to="/login" />} />
 			</Routes>
 		</Router>
