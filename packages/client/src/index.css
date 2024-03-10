@@ -2,6 +2,11 @@
     background-color: #0494db !important;
 }
 
-.logo-image{
-    width: 120px;
+#root{
+    background-color: #fafafa;
+}
+
+
+.darkmode {
+    filter: invert(95%) hue-rotate(180deg) !important;
 }

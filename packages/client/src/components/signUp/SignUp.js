@@ -38,7 +38,7 @@ export default function SignUpPage() {
 					Create your account
 				</Heading>
 				<Text color="gray.500">
-					Already have an account? <Link href="/login">Log in</Link>
+					Already have an account? <Link href="/login" color="black">Log in</Link>
 				</Text>
 
 				<Box

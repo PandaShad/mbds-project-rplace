@@ -2,7 +2,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
 import {
-	Button,
 	Collapse,
 	Navbar,
 	NavbarToggler,
@@ -11,24 +10,32 @@ import {
 	NavItem,
 	NavLink,
 } from 'reactstrap';
+import { Button } from '@chakra-ui/react';
 import logo from '../../images/logo.png';
 import logo2 from '../../images/logo2.png';
 import './navbar.css';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { useDarkMode } from '../../contexts/DarkModeContext';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 function NavbarCompenant(args) {
 	const [isOpen, setIsOpen] = useState(false);
 	const { isAuthenticated } = useAuth();
 	const navigate = useNavigate();
+	const { isDarkMode, toggleDarkMode } = useDarkMode();
 
 	const toggle = () => setIsOpen(!isOpen);
 
+	const handleDarkModeToggle = () => {
+		toggleDarkMode();
+	};
+
 	return (
 		<div>
-			<Navbar {...args} expand="md" dark color="dark">
+			<Navbar {...args} expand="md" style={{ background: '#F1F1F1' }}>
 				<NavbarBrand href="/">
-					<div className="logo-container">
+					<div className="logo-container d-flex ">
 						<img alt="Logo" src={logo} className="logo-image " />
 						<img alt="Logo" src={logo2} className="logo-image ms-1" />
 					</div>
@@ -45,11 +52,14 @@ function NavbarCompenant(args) {
 							</NavLink>
 						</NavItem>
 					</Nav>
+					<Button onClick={handleDarkModeToggle} className="me-2" variant="ghost">
+						{isDarkMode ? <SunIcon /> : <MoonIcon />}
+					</Button>
 					{
 						isAuthenticated ? (
-							<Button color="info" className="text-white" onClick={() => navigate('/myprofile')}>Profil</Button>
+							<Button colorScheme="teal" onClick={() => navigate('/myprofile')}>Profil</Button>
 						) : (
-							<Button color="info" className="text-white" onClick={() => navigate('/login')}>Log in</Button>
+							<Button colorScheme="teal" onClick={() => navigate('/login')}>Log in</Button>
 						)
 					}
 				</Collapse>
