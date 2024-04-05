@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const boardSchema = new mongoose.Schema({
 	title: { type: String, required: true },
 	override: { type: Boolean, required: true },
-	description: { type: String, required: true },
+	description: { type: String, default: '' },
 	dimension: {
 		type: {
 			width: { type: Number, required: true },

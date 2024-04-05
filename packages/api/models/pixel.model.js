@@ -15,6 +15,8 @@ const pixelSchema = new mongoose.Schema({
 	created_date: { type: Date, required: true },
 });
 
+pixelSchema.index({ board: 1, position: 1 }, { unique: true });
+
 const Pixel = mongoose.model('Pixel', pixelSchema);
 
 module.exports = Pixel;

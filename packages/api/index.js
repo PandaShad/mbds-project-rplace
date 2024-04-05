@@ -9,7 +9,9 @@ const connectToDb = require('./database/conn.js');
 
 const app = express();
 const port = 8000;
+
 require('dotenv').config();
+require('./tasks/updateBoardStatus.task.js');
 
 app.use(cors()); //autorise le CORS
 app.use(json());

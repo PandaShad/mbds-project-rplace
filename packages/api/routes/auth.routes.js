@@ -22,6 +22,7 @@ authRouter.post('/register', async (req, res) => {
 			lastName: req.body.lastName,
 			email: req.body.email,
 			password: hashedPassword,
+			role: 'user',
 		});
 		await newUser.save();
 		return res.status(201).send('User created');
