@@ -1,9 +1,14 @@
-/* eslint-disable import/order */
+const { json, urlencoded, Router } = require('express');
 const Board = require('../models/board.model');
+const isAdmin = require('../middlewares/admin.middleware');
+const verifyToken = require('../middlewares/auth.middleware');
+const deletePixelByBoardId = require('../services/pixel.service');
 
-const boardRouter = require('express').Router();
+const boardRouter = Router();
+boardRouter.use(json());
+boardRouter.use(urlencoded({ extended: true }));
 
-boardRouter.post('/create', async (req, res) => {
+boardRouter.post('/create', [verifyToken, isAdmin], async (req, res) => {
 	try {
 		const newBoard = new Board({
 			title: req.body.title,
@@ -16,8 +21,6 @@ boardRouter.post('/create', async (req, res) => {
 			waiting_time: req.body.waiting_time,
 			start_date: Date.now(),
 			end_date: req.body.end_date,
-			last_update: Date.now(),
-			update_number: 0,
 			status: 'ongoing',
 			created_by: req.body.created_by,
 		});
@@ -55,6 +58,15 @@ boardRouter.get('/:id', async (req, res) => {
 	}
 });
 
+boardRouter.get('/count', async (_, res) => {
+	try {
+		const count = await Board.countDocuments();
+		return res.status(200).send({ count });
+	} catch (error) {
+		return res.status(500).send(`There was a problem counting the boards: ${error}`);
+	}
+});
+
 boardRouter.put('/:id/update', async (req, res) => {
 	try {
 		const board = await Board.findById(req.params.id);
@@ -76,8 +88,6 @@ boardRouter.put('/:id/update', async (req, res) => {
 			height: req.body.dimension.height || board.dimension.height,
 		};
 		board.waiting_time = req.body.waiting_time || board.waiting_time;
-		board.last_update = Date.now();
-		board.update_number += 1;
 		await board.save();
 		return res.status(200).send('Board updated');
 	} catch (error) {
@@ -91,9 +101,13 @@ boardRouter.delete('/:id/delete', async (req, res) => {
 		if (!board) {
 			return res.status(404).send('Board not found');
 		}
+		// eslint-disable-next-line no-underscore-dangle
+		await deletePixelByBoardId(board._id);
 		await board.delete();
 		return res.status(200).send('Board deleted');
 	} catch (error) {
 		return res.status(500).send(`There was a problem deleting the board: ${error}`);
 	}
 });
+
+module.exports = boardRouter;

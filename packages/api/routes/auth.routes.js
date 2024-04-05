@@ -42,7 +42,7 @@ authRouter.post('/login', async (req, res) => {
 			return res.status(401).send('The email or password is incorrect');
 		}
 		// eslint-disable-next-line no-underscore-dangle
-		const token = sign({ id: user._id }, process.env.JWT_SECRET, {
+		const token = sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
 			expiresIn: 86400,
 		});
 		return res.status(200).send({ auth: true, token });

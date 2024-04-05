@@ -5,6 +5,9 @@ const { json, urlencoded } = require('express');
 const cors = require('cors');
 
 const authRouter = require('./routes/auth.routes.js');
+const boardRouter = require('./routes/board.routes.js');
+const pixelRouter = require('./routes/pixel.routes.js');
+
 const connectToDb = require('./database/conn.js');
 
 const app = express();
@@ -20,6 +23,8 @@ app.use(urlencoded({ extended: true }));
 const prefix = '/api';
 
 app.use(`${prefix}/auth`, authRouter);
+app.use(`${prefix}/board`, boardRouter);
+app.use(`${prefix}/pixel`, pixelRouter);
 
 connectToDb();
 

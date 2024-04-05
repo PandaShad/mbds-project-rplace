@@ -1,5 +1,5 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
-import { verify } from 'jsonwebtoken';
+/* eslint-disable import/no-extraneous-dependencies */
+const { verify } = require('jsonwebtoken');
 
 function verifyToken(req, res, next) {
 	const token = req.headers['x-access-token'];
@@ -10,10 +10,10 @@ function verifyToken(req, res, next) {
 		if (err) {
 			return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
 		}
-		req.userId = decoded.id;
+		req.user = decoded;
 		return next();
 	});
 	return null;
 }
 
-export default verifyToken;
+module.exports = verifyToken;

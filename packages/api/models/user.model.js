@@ -10,7 +10,7 @@ const userSchema = new mongoose.Schema({
 	role: { type: String, required: true },
 	contributions: {
 		type: [{
-			pixelBoardId: {
+			board_id: {
 				type: mongoose.Schema.ObjectId,
 				ref: 'Pixel',
 			},

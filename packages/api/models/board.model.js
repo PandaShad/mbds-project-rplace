@@ -11,12 +11,11 @@ const boardSchema = new mongoose.Schema({
 			height: { type: Number, required: true },
 		},
 		required: true,
+		_id: false,
 	},
 	waiting_time: { type: Number, required: true },
 	start_date: { type: Date, required: true },
 	end_date: { type: Date, required: true },
-	last_update: { type: Date, required: true },
-	update_number: { type: Number, required: true },
 	status: { type: String, required: true },
 	created_by: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
 });
