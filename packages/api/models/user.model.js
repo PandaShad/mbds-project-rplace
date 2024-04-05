@@ -18,7 +18,12 @@ const userSchema = new mongoose.Schema({
 				type: Date,
 				default: Date.now,
 			},
+			update_number: {
+				type: Number,
+				default: 1,
+			},
 		}],
+		_id: false,
 		default: [],
 	},
 });

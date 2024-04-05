@@ -8,6 +8,15 @@ pixelRouter.use(urlencoded({ extended: true }));
 
 pixelRouter.post('/create', async (req, res) => {
 	try {
+		const existingPixel = await Pixel.findOne({
+			board_id: req.body.board_id,
+			position: req.body.position,
+		});
+
+		if (existingPixel) {
+			return res.status(400).send('Pixel already exists');
+		}
+
 		const newPixel = new Pixel({
 			board_id: req.body.board_id,
 			position: req.body.position,
@@ -24,7 +33,7 @@ pixelRouter.post('/create', async (req, res) => {
 	}
 });
 
-pixelRouter.get('/getBoard/:board_id ', async (req, res) => {
+pixelRouter.get('/getBoard/:board_id', async (req, res) => {
 	try {
 		const pixels = await Pixel.find({ board_id: req.params.board_id });
 		return res.status(200).send(pixels);

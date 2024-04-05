@@ -1,8 +1,10 @@
+/* eslint-disable no-underscore-dangle */
 const { json, urlencoded, Router } = require('express');
 const Board = require('../models/board.model');
 const isAdmin = require('../middlewares/admin.middleware');
 const verifyToken = require('../middlewares/auth.middleware');
 const deletePixelByBoardId = require('../services/pixel.service');
+const { deleteUserContributions } = require('../services/user.service');
 
 const boardRouter = Router();
 boardRouter.use(json());
@@ -101,9 +103,9 @@ boardRouter.delete('/:id/delete', async (req, res) => {
 		if (!board) {
 			return res.status(404).send('Board not found');
 		}
-		// eslint-disable-next-line no-underscore-dangle
 		await deletePixelByBoardId(board._id);
-		await board.delete();
+		await deleteUserContributions(board._id);
+		await Board.deleteOne({ _id: board._id });
 		return res.status(200).send('Board deleted');
 	} catch (error) {
 		return res.status(500).send(`There was a problem deleting the board: ${error}`);

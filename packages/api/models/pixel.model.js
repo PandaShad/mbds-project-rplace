@@ -9,6 +9,7 @@ const pixelSchema = new mongoose.Schema({
 			y: { type: Number, required: true },
 		},
 		required: true,
+		_id: false,
 	},
 	color: { type: String, required: true },
 	created_by: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
