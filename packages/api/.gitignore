@@ -9,6 +9,7 @@ npm-debug.log
 *.tgz
 
 # env files
+.env
 .env.development.local*
 .env.development.lp.local*
 .env.production.*
