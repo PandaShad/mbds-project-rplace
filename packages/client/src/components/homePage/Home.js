@@ -1,48 +1,114 @@
 import React, { useState, useEffect } from 'react';
-
-// eslint-disable-next-line
+// eslint-disable-next-line import/no-extraneous-dependencies
+import axios from 'axios';
 import {
 	Box,
-	Button,
 	Container,
 	Heading,
 	Link,
-	Stack,
-	Text,
-	VStack,
-	Divider,
-	SimpleGrid,
 	Spinner,
+	SimpleGrid,
+	Flex,
+	Button,
+	useToast,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import CreateBoard from './CreateBoard';
+import { useAuth } from '../../providers/authProvider';
 
-// Fonction pour obtenir des données factices sur les utilisateurs et les PixelBoards
-const fetchUserData = () => new Promise((resolve) => {
-	setTimeout(() => resolve({
-		totalUsers: 1000,
-		totalPixelBoards: 500,
-		latestInProgress: [
-			{ id: 1, name: 'PixelBoard In Progress 1' },
-			{ id: 2, name: 'PixelBoard In Progress 2' },
-		],
-		latestCompleted: [
-			{ id: 3, name: 'PixelBoard Completed 1' },
-			{ id: 4, name: 'PixelBoard Completed 2' },
-		],
-	}), 1000);
-});
+const mockOngoingBoards = [
+	{ id: 1, name: 'Ongoing Board 1' },
+	{ id: 2, name: 'Ongoing Board 2' },
+	{ id: 3, name: 'Ongoing Board 3' },
+];
+
+const mockFinishedBoards = [
+	{ id: 4, name: 'Finished Board 1' },
+	{ id: 5, name: 'Finished Board 2' },
+	{ id: 6, name: 'Finished Board 3' },
+];
 
 const HomePage = () => {
-	const [userData, setUserData] = useState(null);
+	const toast = useToast();
+	const [ongoingBoards, setOngoingBoards] = useState([]);
+	const [finishedBoards, setFinishedBoards] = useState([]);
+	const [loading, setLoading] = useState(true);
 
 	useEffect(() => {
-		// Charge les données sur la page d'accueil
+		const fetchOngoingBoards = async () => {
+			try {
+				const response = await axios.get(
+					'http://localhost:8000/api/board/list-ongoing',
+				);
+				setOngoingBoards(response.data);
+			} catch (error) {
+				toast({
+					title: 'Error Loading',
+					description: error.message,
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+				});
+			}
+		};
+
+		const fetchFinishedBoards = async () => {
+			try {
+				const response = await axios.get(
+					'http://localhost:8000/api/board/list-finished',
+				);
+				setFinishedBoards(response.data);
+			} catch (error) {
+				toast({
+					title: 'Error Loading',
+					description: error.message,
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+				});
+			}
+		};
+
 		const fetchData = async () => {
-			const data = await fetchUserData();
-			setUserData(data);
+			setLoading(true);
+			await fetchOngoingBoards();
+			await fetchFinishedBoards();
+			setLoading(false);
 		};
 
 		fetchData();
-	}, []);
+	}, [toast]);
+
+	const [showCreateForm, setShowCreateForm] = useState(false);
+
+	const { user } = useAuth();
+
+	const useCreateBoardNavigation = () => {
+		const navigate = useNavigate();
+
+		const handleCreateBoard = () => {
+			if (!user) {
+				setShowCreateForm(true);
+			} else {
+				toast({
+					title: 'Please log in',
+					description: 'You need to log in to create a board',
+					status: 'info',
+					duration: 5000,
+					isClosable: true,
+				});
+				navigate('/login');
+			}
+		};
+
+		return handleCreateBoard;
+	};
+
+	const handleCreateBoard = useCreateBoardNavigation();
+
+	const handleCloseForm = () => {
+		setShowCreateForm(false);
+	};
 
 	return (
 		<Container
@@ -50,78 +116,71 @@ const HomePage = () => {
 			py={{ base: '12', md: '24' }}
 			px={{ base: '0', sm: '8' }}
 		>
-			<Stack spacing="8" align="center">
-				<Heading size={{ base: 'md', md: 'lg' }} textAlign="center">
-					Welcome to PixelBoard!
-				</Heading>
-				<VStack spacing="4" align="start" w="100%">
-					{userData ? (
-						<>
-							<Stack
-								direction="row"
-								spacing="4"
-								justifyContent="space-between"
-								w="100%"
+			<Heading as="h1" size="lg" textAlign="center" mb="8">
+				Welcome to PixelBoard!
+			</Heading>
+			<Box mb="8">
+				<Flex alignItems="center" mb="4">
+					<Heading as="h2" size="md" mr="2">
+						Ongoing Boards - {ongoingBoards.length}
+					</Heading>
+					{loading && <Spinner size="lg" />}
+				</Flex>
+				{loading ? (
+					mockOngoingBoards.map((board) => (
+						<Link key={board.id} href="#">
+							{board.name}
+						</Link>
+					))
+				) : (
+					<SimpleGrid columns={1} spacing={2}>
+						{ongoingBoards.map((board) => (
+							<Link
+								key={board.id}
+								href={`/pixelboard/${board.id}`}
 							>
-								<Box>
-									<Text fontSize="xl" fontWeight="bold">
-										Total Users
-									</Text>
-									<Text>{userData.totalUsers}</Text>
-								</Box>
-								<Box>
-									<Text fontSize="xl" fontWeight="bold">
-										Total PixelBoards
-									</Text>
-									<Text>{userData.totalPixelBoards}</Text>
-								</Box>
-							</Stack>
-							<Divider />
-							<VStack spacing="4" align="start" w="100%">
-								<Text fontSize="xl" fontWeight="bold">
-									Latest PixelBoards in Progress:
-								</Text>
-								<SimpleGrid columns={1} spacing={2} w="100%">
-									{userData.latestInProgress.map((board) => (
-										<Link
-											key={board.id}
-											href={`/pixelboard/${board.id}`}
-										>
-											{board.name}
-										</Link>
-									))}
-								</SimpleGrid>
-							</VStack>
-							<Divider />
-							<VStack spacing="4" align="start" w="100%">
-								<Text fontSize="xl" fontWeight="bold">
-									Latest Completed PixelBoards:
-								</Text>
-								<SimpleGrid columns={1} spacing={2} w="100%">
-									{userData.latestCompleted.map((board) => (
-										<Link
-											key={board.id}
-											href={`/pixelboard/${board.id}`}
-										>
-											{board.name}
-										</Link>
-									))}
-								</SimpleGrid>
-							</VStack>
-						</>
-					) : (
-						<Spinner size="xl" />
-					)}
-				</VStack>
-				<Stack spacing="4" direction="row">
-					<Button as={Link} href="/login" colorScheme="teal">
-						Log in
-					</Button>
-					<Button as={Link} href="/signup" colorScheme="teal">
-						Sign up
-					</Button>
-				</Stack>
-			</Stack>
+								{board.name}
+							</Link>
+						))}
+					</SimpleGrid>
+				)}
+			</Box>
+			<Box>
+				<Flex alignItems="center" mb="4">
+					<Heading as="h2" size="md" mr="2">
+						Finished Boards - {finishedBoards.length}
+					</Heading>
+					{loading && <Spinner size="lg" />}
+				</Flex>
+				{loading ? (
+					mockFinishedBoards.map((board) => (
+						<Link key={board.id} href="#">
+							{board.name}
+						</Link>
+					))
+				) : (
+					<SimpleGrid columns={1} spacing={2}>
+						{finishedBoards.map((board) => (
+							<Link
+								key={board.id}
+								href={`/pixelboard/${board.id}`}
+							>
+								{board.name}
+							</Link>
+						))}
+					</SimpleGrid>
+				)}
+			</Box>
+			<Button
+				colorScheme="teal"
+				position="fixed"
+				bottom="4"
+				right="4"
+				onClick={handleCreateBoard}
+			>
+				Create New Board
+			</Button>
+			{showCreateForm && <CreateBoard onClose={handleCloseForm} />}
 		</Container>
 	);
 };
