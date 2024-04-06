@@ -12,12 +12,51 @@ import {
 	Link,
 	Stack,
 	Text,
+	useToast,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { PasswordField } from './PasswordField';
-import { useAuth } from '../../contexts/AuthContext';
+import { useAuth } from '../../providers/authProvider';
+import { useLogin } from '../../hooks/useLogin';
 
 export default function LoginPage() {
-	const { login } = useAuth();
+	const { login, loading } = useLogin();
+	const { setToken } = useAuth();
+	const navigate = useNavigate();
+	const toast = useToast();
+
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+
+	const handleLogin = async () => {
+		const loginData = {
+			email,
+			password,
+		};
+
+		try {
+			const data = await login(loginData);
+			toast({
+				title: 'Login successful',
+				description: data.message,
+				status: 'success',
+				duration: 5000,
+				isClosable: true,
+			});
+			setToken(data.token);
+			navigate('/myprofile');
+		} catch (err) {
+			const errorMessage = err || 'An error occurred. Please try again.';
+			toast({
+				title: 'Login failed',
+				description: errorMessage,
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+			});
+		}
+	};
 
 	return (
 		<Container
@@ -41,37 +80,44 @@ export default function LoginPage() {
 					boxShadow="md"
 					borderRadius="md"
 				>
-					<Stack spacing="6">
-						<FormControl>
-							<FormLabel htmlFor="email">Email</FormLabel>
-							<Input
-								id="email"
-								type="email"
-								focusBorderColor="teal.500"
-								borderRadius="md"
+					<form onSubmit={handleLogin}>
+						<Stack spacing="6">
+							<FormControl>
+								<FormLabel htmlFor="email">Email</FormLabel>
+								<Input
+									id="email"
+									type="email"
+									focusBorderColor="teal.500"
+									borderRadius="md"
+									onChange={(e) => setEmail(e.target.value)}
+								/>
+							</FormControl>
+							<PasswordField
+								onChange={(e) => setPassword(e.target.value)}
 							/>
-						</FormControl>
-						<PasswordField />
-						<HStack justify="space-between" alignItems="center">
-							<Checkbox colorScheme="teal">Remember me</Checkbox>
-							<Link
-								color="teal.500"
-								fontSize="sm"
-								fontWeight="bold"
+							<HStack justify="space-between" alignItems="center">
+								<Checkbox colorScheme="teal">Remember me</Checkbox>
+								<Link
+									color="teal.500"
+									fontSize="sm"
+									fontWeight="bold"
+								>
+									Forgot password?
+								</Link>
+							</HStack>
+							<Button
+								onClick={handleLogin}
+								colorScheme="teal"
+								size="lg"
+								fontSize="md"
+								w="full"
+								isLoading={loading}
+								loadingText="Signing in"
 							>
-								Forgot password?
-							</Link>
-						</HStack>
-						<Button
-							onClick={login}
-							colorScheme="teal"
-							size="lg"
-							fontSize="md"
-							w="full"
-						>
-							Sign in
-						</Button>
-					</Stack>
+								Sign in
+							</Button>
+						</Stack>
+					</form>
 				</Box>
 			</Stack>
 		</Container>

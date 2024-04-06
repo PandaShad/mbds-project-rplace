@@ -1,4 +1,4 @@
-// eslint-disable-next-line
+/* eslint-disable import/no-extraneous-dependencies */
 import {
 	FormControl,
 	FormLabel,
@@ -10,6 +10,7 @@ import {
 	useMergeRefs,
 } from '@chakra-ui/react';
 import { forwardRef, useRef } from 'react';
+import PropTypes from 'prop-types';
 
 // eslint-disable-next-line
 import { HiEye, HiEyeOff } from 'react-icons/hi';
@@ -47,10 +48,19 @@ export const PasswordField = forwardRef((props, ref) => {
 					type={isOpen ? 'text' : 'password'}
 					autoComplete="current-password"
 					required
+					onChange={props.onChange}
 					{...props}
 				/>
 			</InputGroup>
 		</FormControl>
 	);
 });
+
+PasswordField.propTypes = {
+	onChange: PropTypes.func,
+};
+
+PasswordField.defaultProps = {
+	onChange: () => {},
+};
 PasswordField.displayName = 'PasswordField';
