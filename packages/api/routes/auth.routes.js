@@ -5,6 +5,7 @@ const { Router, json, urlencoded } = require('express');
 const { sign } = require('jsonwebtoken');
 const { hash, compare } = require('bcryptjs');
 const User = require('../models/user.model.js');
+const verifyToken = require('../middlewares/auth.middleware.js');
 
 const authRouter = Router();
 authRouter.use(json());
@@ -63,6 +64,18 @@ authRouter.post('/login', async (req, res) => {
 		return res.status(200).send({ auth: true, token });
 	} catch (error) {
 		return res.status(500).send(`There was a problem on the server: ${error}`);
+	}
+});
+
+authRouter.get('/me', verifyToken, async (req, res) => {
+	try {
+		const user = await User.findById(req.user.id, { password: 0 });
+		if (!user) {
+			return res.status(404).send('No user found');
+		}
+		return res.status(200).send(user);
+	} catch (error) {
+		return res.status(500).send(`There was a problem finding the user: ${error}`);
 	}
 });
 
