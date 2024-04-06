@@ -21,7 +21,7 @@ boardRouter.post('/create', [verifyToken, isAdmin], async (req, res) => {
 				height: req.body.dimension.height,
 			},
 			waiting_time: req.body.waiting_time,
-			start_date: Date.now(),
+			start_date: req.body.start_date,
 			end_date: req.body.end_date,
 			status: 'ongoing',
 			created_by: req.body.created_by,
