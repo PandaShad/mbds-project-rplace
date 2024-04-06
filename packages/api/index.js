@@ -1,19 +1,32 @@
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/extensions */
 const express = require('express');
+const { json, urlencoded } = require('express');
 const cors = require('cors');
 
-const api = require('./api');
+const authRouter = require('./routes/auth.routes.js');
+const boardRouter = require('./routes/board.routes.js');
+const pixelRouter = require('./routes/pixel.routes.js');
+
+const connectToDb = require('./database/conn.js');
 
 const app = express();
 const port = 8000;
 
+require('dotenv').config();
+require('./tasks/updateBoardStatus.task.js');
+
 app.use(cors()); //autorise le CORS
-app.use(express.json());
+app.use(json());
+app.use(urlencoded({ extended: true }));
 
-app.get('/', (req, res) => { // GET SUR localhost:8000/
-	res.json('Hello World!');
-});
+const prefix = '/api';
 
-app.use('/api', api);
+app.use(`${prefix}/auth`, authRouter);
+app.use(`${prefix}/board`, boardRouter);
+app.use(`${prefix}/pixel`, pixelRouter);
+
+connectToDb();
 
 app.listen(port, () => {
 	// eslint-disable-next-line no-console
