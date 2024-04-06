@@ -1,6 +1,6 @@
 const { Router, json, urlencoded } = require('express');
 const Pixel = require('../models/pixel.model');
-const upadteUserContributions = require('../services/user.service');
+const { updateUserContributions } = require('../services/user.service');
 
 const pixelRouter = Router();
 pixelRouter.use(json());
@@ -53,7 +53,7 @@ pixelRouter.put('/:id/update', async (req, res) => {
 		pixel.last_update = Date.now();
 		pixel.update_number += 1;
 		await pixel.save();
-		await upadteUserContributions(req.body.created_by, pixel.board_id);
+		await updateUserContributions(req.body.created_by, pixel.board_id);
 		return res.status(200).send('Pixel updated');
 	} catch (error) {
 		return res.status(500).send(`There was a problem updating the pixel: ${error}`);
