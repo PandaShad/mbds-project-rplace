@@ -9,3 +9,12 @@ export const registerUser = async (userData) => {
 	});
 	return response.data;
 };
+
+export const loginUser = async (loginData) => {
+	const response = await axios.post(API_ROUTES.login, loginData, {
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	});
+	return response.data;
+};

@@ -13,18 +13,22 @@ import {
 	FormErrorMessage,
 	useToast,
 } from '@chakra-ui/react';
+import { useNavigate } from 'react-router-dom';
 import { PasswordField } from '../loginPage/PasswordField';
 import { useRegister } from '../../hooks/useRegister';
+import { useAuth } from '../../providers/authProvider';
 
 export default function SignUpPage() {
 	const { register, loading } = useRegister();
+	const { setToken } = useAuth();
+	const navigate = useNavigate();
 	const toast = useToast();
 
 	const [userName, setUserName] = useState('');
-	const [firstName, setFirstName] = useState('Test');
+	const [firstName, setFirstName] = useState('');
 	const [lastName, setLastName] = useState('');
 	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('123');
+	const [password, setPassword] = useState('');
 	const [emailError, setEmailError] = useState('');
 
 	const validateEmail = (value) => {
@@ -50,6 +54,8 @@ export default function SignUpPage() {
 				duration: 5000,
 				isClosable: true,
 			});
+			setToken(data.token);
+			navigate('/myprofile');
 		} catch (err) {
 			const errorMessage = err || 'An error occurred. Please try again.';
 			toast({

@@ -57,7 +57,10 @@ export const PasswordField = forwardRef((props, ref) => {
 });
 
 PasswordField.propTypes = {
-	onChange: PropTypes.func.isRequired,
+	onChange: PropTypes.func,
 };
 
+PasswordField.defaultProps = {
+	onChange: () => {},
+};
 PasswordField.displayName = 'PasswordField';
