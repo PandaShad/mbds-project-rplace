@@ -8,6 +8,7 @@ import Home from './components/homePage/Home';
 import Login from './components/loginPage/Login';
 import SignUp from './components/signUp/SignUp';
 import MyProfile from './components/myProfile/MyProfile';
+import UpdateProfile from './components/myProfile/UpdateProfile';
 import PixelBoard from './components/pixelBoard/PixelBoard';
 import { useAuth } from './contexts/AuthContext';
 
@@ -23,6 +24,8 @@ function App() {
 				<Route path="/signin" element={isAuthenticated ? <Navigate to="/myprofile" /> : <SignUp />} />
 				<Route path="/myprofile" element={isAuthenticated ? <MyProfile /> : <Navigate to="/login" />} />
 				<Route path="/pixelboard" element={<PixelBoard />} />
+				<Route path="/updateprofile" element={<UpdateProfile />} />
+
 			</Routes>
 		</Router>
 	);

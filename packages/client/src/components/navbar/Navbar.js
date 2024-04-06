@@ -21,7 +21,7 @@ import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 function NavbarCompenant(args) {
 	const [isOpen, setIsOpen] = useState(false);
-	const { isAuthenticated } = useAuth();
+	const { isAuthenticated, user } = useAuth();
 	const navigate = useNavigate();
 	const { isDarkMode, toggleDarkMode } = useDarkMode();
 
@@ -57,7 +57,7 @@ function NavbarCompenant(args) {
 					</Button>
 					{
 						isAuthenticated ? (
-							<Button colorScheme="teal" onClick={() => navigate('/myprofile')}>Profil</Button>
+							<Button colorScheme="teal" onClick={() => navigate('/myprofile')}><span className="me-2">{user.username}</span></Button>
 						) : (
 							<Button colorScheme="teal" onClick={() => navigate('/login')}>Log in</Button>
 						)

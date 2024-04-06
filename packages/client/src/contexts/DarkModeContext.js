@@ -30,11 +30,16 @@ export function DarkModeProvider({ children }) {
 			images.forEach((img) => img.classList.remove('darkmode'));
 		}
 	};
+	const updateUserProfile = (updatedProfile) => {
+		setUser(updatedProfile);
+		// set to back
+	};
 
 	// Utilisez useMemo pour mémoriser l'objet value
 	const value = useMemo(() => ({
 		isDarkMode,
 		toggleDarkMode,
+		updateUserProfile,
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}), [isDarkMode]);
 
