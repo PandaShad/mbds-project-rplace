@@ -1,30 +1,65 @@
 import React, { useState } from 'react';
-// eslint-disable-next-line
 import {
 	Box,
 	Button,
-	Checkbox,
 	Container,
 	FormControl,
 	FormLabel,
 	Heading,
-	HStack,
 	Input,
 	Link,
 	Stack,
 	Text,
 	FormErrorMessage,
+	useToast,
 } from '@chakra-ui/react';
 import { PasswordField } from '../loginPage/PasswordField';
-import { useAuth } from '../../contexts/AuthContext';
+import { useRegister } from '../../hooks/useRegister';
 
 export default function SignUpPage() {
-	const { signup } = useAuth();
+	const { register, loading } = useRegister();
+	const toast = useToast();
+
+	const [userName, setUserName] = useState('');
+	const [firstName, setFirstName] = useState('Test');
+	const [lastName, setLastName] = useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('123');
 	const [emailError, setEmailError] = useState('');
 
 	const validateEmail = (value) => {
 		const isValid = /\S+@\S+\.\S+/.test(value);
 		setEmailError(isValid ? '' : 'Invalid email address');
+	};
+
+	const handleSignup = async () => {
+		const userData = {
+			userName,
+			firstName,
+			lastName,
+			email,
+			password,
+		};
+
+		try {
+			const data = await register(userData);
+			toast({
+				title: 'Account created',
+				description: data.message,
+				status: 'success',
+				duration: 5000,
+				isClosable: true,
+			});
+		} catch (err) {
+			const errorMessage = err || 'An error occurred. Please try again.';
+			toast({
+				title: 'Error',
+				description: errorMessage,
+				status: 'error',
+				duration: 5000,
+				isClosable: true,
+			});
+		}
 	};
 
 	return (
@@ -48,63 +83,78 @@ export default function SignUpPage() {
 					boxShadow="md"
 					borderRadius="md"
 				>
-					<Stack spacing="6">
-						<FormControl isRequired>
-							<FormLabel htmlFor="firstName">
-								First Name
-							</FormLabel>
-							<Input
-								id="firstName"
-								type="text"
-								focusBorderColor="teal.500"
-								borderRadius="md"
-							/>
-						</FormControl>
+					<form onSubmit={handleSignup}>
+						<Stack spacing="6">
+							<FormControl isRequired>
+								<FormLabel htmlFor="userName">
+									User Name
+								</FormLabel>
+								<Input
+									id="userName"
+									type="text"
+									focusBorderColor="teal.500"
+									borderRadius="md"
+									onChange={(e) => setUserName(e.target.value)}
+								/>
+							</FormControl>
 
-						<FormControl isRequired>
-							<FormLabel htmlFor="lastName">Last Name</FormLabel>
-							<Input
-								id="lastName"
-								type="text"
-								focusBorderColor="teal.500"
-								borderRadius="md"
-							/>
-						</FormControl>
+							<FormControl isRequired>
+								<FormLabel htmlFor="firstName">
+									First Name
+								</FormLabel>
+								<Input
+									id="firstName"
+									type="text"
+									focusBorderColor="teal.500"
+									borderRadius="md"
+									onAbort={(e) => setFirstName(e.target.value)}
+								/>
+							</FormControl>
 
-						<FormControl isInvalid={!!emailError} isRequired>
-							<FormLabel htmlFor="email">Email</FormLabel>
-							<Input
-								id="email"
-								type="email"
-								focusBorderColor="teal.500"
-								borderRadius="md"
-								onBlur={(e) => validateEmail(e.target.value)}
-							/>
-							<FormErrorMessage>{emailError}</FormErrorMessage>
-						</FormControl>
+							<FormControl isRequired>
+								<FormLabel htmlFor="lastName">Last Name</FormLabel>
+								<Input
+									id="lastName"
+									type="text"
+									focusBorderColor="teal.500"
+									borderRadius="md"
+									onChange={(e) => setLastName(e.target.value)}
+								/>
+							</FormControl>
 
-						<FormControl isRequired>
-							<PasswordField />
-						</FormControl>
+							<FormControl isInvalid={!!emailError} isRequired>
+								<FormLabel htmlFor="email">Email</FormLabel>
+								<Input
+									id="email"
+									type="email"
+									focusBorderColor="teal.500"
+									borderRadius="md"
+									onBlur={(e) => validateEmail(e.target.value)}
+									onChange={(e) => setEmail(e.target.value)}
+								/>
+								<FormErrorMessage>{emailError}</FormErrorMessage>
+							</FormControl>
 
-						<FormControl isRequired>
-							<HStack justify="space-between" alignItems="center">
-								<Checkbox colorScheme="teal">
-									I agree to the terms
-								</Checkbox>
-							</HStack>
-						</FormControl>
+							<FormControl isRequired>
+								<PasswordField
+									onChange={(e) => setPassword(e.target.value)}
+								/>
+							</FormControl>
 
-						<Button
-							onClick={signup}
-							colorScheme="teal"
-							size="lg"
-							fontSize="md"
-							w="full"
-						>
-							Sign up
-						</Button>
-					</Stack>
+							<Button
+								onClick={handleSignup}
+								type="submit"
+								colorScheme="teal"
+								size="lg"
+								fontSize="md"
+								w="full"
+								isLoading={loading}
+								loadingText="Signing up"
+							>
+								Sign up
+							</Button>
+						</Stack>
+					</form>
 				</Box>
 			</Stack>
 		</Container>
