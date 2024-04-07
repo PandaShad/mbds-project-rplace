@@ -38,6 +38,7 @@ pixelRouter.post('/create', async (req, res) => {
 		});
 		await newPixel.save();
 		await updateUserContributions(req.body.created_by, newPixel.board_id);
+		req.app.io.emit('createPixel', newPixel);
 		return res.status(201).send('Pixel created');
 	} catch (error) {
 		return res.status(500).send(`There was a problem creating the pixel: ${error}`);
@@ -76,6 +77,7 @@ pixelRouter.put('/:id/update', async (req, res) => {
 		pixel.update_number += 1;
 		await pixel.save();
 		await updateUserContributions(req.body.created_by, pixel.board_id);
+		req.app.io.emit('updatePixel', pixel);
 		return res.status(200).send('Pixel updated');
 	} catch (error) {
 		return res.status(500).send(`There was a problem updating the pixel: ${error}`);
