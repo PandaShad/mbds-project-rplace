@@ -1,12 +1,15 @@
-.btn-info {
-    background-color: #0494db !important;
-}
 
 #root{
     background-color: #fafafa;
+    min-height: 100vh;
 }
 
 
-.darkmode {
-    filter: invert(95%) hue-rotate(180deg) !important;
+.darkmode{
+    filter: invert(1) !important;
+}
+
+.canvas-dark{
+    background-color: #fafafa;
+    border : 3px solid #ce686a !important;
 }

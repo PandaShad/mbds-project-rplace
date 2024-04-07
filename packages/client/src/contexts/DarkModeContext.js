@@ -11,7 +11,8 @@ export function useDarkMode() {
 
 // eslint-disable-next-line react/prop-types
 export function DarkModeProvider({ children }) {
-	const [isDarkMode, setIsDarkMode] = useState(false);
+	const prefersDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+	const [isDarkMode, setIsDarkMode] = useState(prefersDarkMode);
 
 	const toggleDarkMode = () => {
 		setIsDarkMode(!isDarkMode); // Met à jour l'état isDarkMode
@@ -30,8 +31,6 @@ export function DarkModeProvider({ children }) {
 			images.forEach((img) => img.classList.remove('darkmode'));
 		}
 	};
-
-	// Utilisez useMemo pour mémoriser l'objet value
 	const value = useMemo(() => ({
 		isDarkMode,
 		toggleDarkMode,
