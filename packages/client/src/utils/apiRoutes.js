@@ -4,6 +4,7 @@ export const API_ROUTES = {
 	register: `${API_BASE_URL}/auth/register`,
 	login: `${API_BASE_URL}/auth/login`,
 	logout: `${API_BASE_URL}/auth/logout`,
+	me: `${API_BASE_URL}/auth/me`,
 
 	getBoardById: (id) => `${API_BASE_URL}/board/${id}`,
 	createBoard: `${API_BASE_URL}/board/create`,
