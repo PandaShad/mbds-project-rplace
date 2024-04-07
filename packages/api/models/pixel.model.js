@@ -12,7 +12,7 @@ const pixelSchema = new mongoose.Schema({
 		_id: false,
 	},
 	color: { type: String, required: true },
-	created_by: { type: mongoose.Schema.ObjectId, ref: 'User', required: true },
+	created_by: { type: mongoose.Schema.ObjectId, ref: 'User' },
 	created_date: { type: Date, required: true },
 	last_update: { type: Date, required: true },
 	update_number: { type: Number, required: true },
