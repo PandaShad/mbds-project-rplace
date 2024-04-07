@@ -6,6 +6,13 @@ export const getBoardById = async (id) => {
 	return response.data;
 };
 
+export const fetchBoards = async () => {
+	const response = await axios.get(
+		API_ROUTES.listBoards,
+	);
+	return response.data;
+};
+
 export const fetchOngoingBoards = async () => {
 	const response = await axios.get(
 		API_ROUTES.listOnGoingBoards,

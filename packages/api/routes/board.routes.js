@@ -33,6 +33,16 @@ boardRouter.post('/create', [verifyToken, isAdmin], async (req, res) => {
 	}
 });
 
+boardRouter.get('/list', async (_, res) => {
+	try {
+		const boards = await Board.find()
+			.populate('created_by', 'userName');
+		return res.status(200).send(boards);
+	} catch (error) {
+		return res.status(500).send(`There was a problem listing the boards: ${error}`);
+	}
+});
+
 boardRouter.get('/list-ongoing', async (_, res) => {
 	try {
 		const boards = await Board.find({ status: 'ongoing' });

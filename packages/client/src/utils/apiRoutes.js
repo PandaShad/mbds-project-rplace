@@ -9,6 +9,7 @@ export const API_ROUTES = {
 
 	getBoardById: (id) => `${API_BASE_URL}/board/${id}`,
 	createBoard: `${API_BASE_URL}/board/create`,
+	listBoards: `${API_BASE_URL}/board/list`,
 	listOnGoingBoards: `${API_BASE_URL}/board/list-ongoing`,
 	listFinishedBoards: `${API_BASE_URL}/board/list-finished`,
 	listUpcomingBoards: `${API_BASE_URL}/board/list-upcoming`,
