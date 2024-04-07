@@ -172,6 +172,9 @@ const HomePage = () => {
 							title={board.title}
 							description={board.description}
 							timeRemaining={calculateTimeRemaining(board.end_date)}
+							width={board.dimension.width}
+							height={board.dimension.height}
+							waitingTime={board.waiting_time}
 						/>
 					))}
 				</Stack>
@@ -190,6 +193,9 @@ const HomePage = () => {
 							title={board.title}
 							description={board.description}
 							timeRemaining={calculateTimeRemaining(board.end_date)}
+							width={board.dimension.width}
+							height={board.dimension.height}
+							waitingTime={board.waiting_time}
 						/>
 					))}
 				</Stack>
@@ -208,6 +214,9 @@ const HomePage = () => {
 							title={board.title}
 							description={board.description}
 							timeRemaining={calculateTimeRemaining(board.end_date)}
+							width={board.dimension.width}
+							height={board.dimension.height}
+							waitingTime={board.waiting_time}
 						/>
 					))}
 				</Stack>
