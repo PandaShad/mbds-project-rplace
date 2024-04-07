@@ -69,7 +69,12 @@ authRouter.post('/login', async (req, res) => {
 
 authRouter.get('/me', verifyToken, async (req, res) => {
 	try {
-		const user = await User.findById(req.user.id, { password: 0 });
+		const user = await User.findById(req.user.id)
+			.select('-password')
+			.populate({
+				path: 'contributions.board_id',
+				select: 'title description dimension status start_date end_date',
+			});
 		if (!user) {
 			return res.status(404).send('No user found');
 		}
