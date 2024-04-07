@@ -6,6 +6,8 @@ import HomePage from '../components/homePage/Home';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicRoute } from './PublicRoute';
 import Board from '../components/boardPage/Board';
+import AdminBoardList from '../components/adminBoardListPage/AdminBoardList';
+import { AdminRoute } from './AdminRoute';
 
 const Routes = () => {
 	const routesForNotAuthenticatedOnly = [
@@ -42,6 +44,19 @@ const Routes = () => {
 		},
 	];
 
+	const routesForAdminOnly = [
+		{
+			path: '/',
+			element: <AdminRoute />,
+			children: [
+				{
+					path: '/boards',
+					element: <AdminBoardList />,
+				},
+			],
+		},
+	];
+
 	const routesForEveryOne = [
 		{
 			path: '/',
@@ -62,6 +77,7 @@ const Routes = () => {
 		...routesForNotAuthenticatedOnly,
 		...routesForAuthenticatedOnly,
 		...routesForEveryOne,
+		...routesForAdminOnly,
 	]);
 
 	return (
