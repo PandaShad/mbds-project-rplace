@@ -31,13 +31,15 @@ pixelRouter.post('/create', async (req, res) => {
 			board_id: req.body.board_id,
 			position: req.body.position,
 			color: req.body.color,
-			created_by: req.body.created_by,
+			created_by: (req.body.created_by !== 'anonymous' ? req.body.created_by : null),
 			created_date: Date.now(),
 			last_update: Date.now(),
 			update_number: 1,
 		});
 		await newPixel.save();
-		await updateUserContributions(req.body.created_by, newPixel.board_id);
+		if (req.body.created_by !== 'anonymous') {
+			await updateUserContributions(req.body.created_by, newPixel.board_id);
+		}
 		req.app.io.emit('createPixel', newPixel);
 		return res.status(201).send('Pixel created');
 	} catch (error) {
@@ -72,11 +74,13 @@ pixelRouter.put('/:id/update', async (req, res) => {
 			return res.status(404).send('Pixel not found');
 		}
 		pixel.color = req.body.color;
-		pixel.created_by = req.body.created_by;
+		pixel.created_by = (req.body.created_by !== 'anonymous' ? req.body.created_by : null);
 		pixel.last_update = Date.now();
 		pixel.update_number += 1;
 		await pixel.save();
-		await updateUserContributions(req.body.created_by, pixel.board_id);
+		if (req.body.created_by !== 'anonymous') {
+			await updateUserContributions(req.body.created_by, pixel.board_id);
+		}
 		req.app.io.emit('updatePixel', pixel);
 		return res.status(200).send('Pixel updated');
 	} catch (error) {

@@ -84,7 +84,7 @@ export default function Board() {
 		if (pixel) {
 			setTooltipData({
 				color: pixel.color,
-				user: pixel.created_by.userName,
+				user: (pixel.created_by ? pixel.created_by.userName : ('anonymous')),
 				last_update: pixel.last_update,
 				update_number: pixel.update_number,
 			});
@@ -114,7 +114,7 @@ export default function Board() {
 				try {
 					const data = {
 						color: selectedColor,
-						created_by: currentUser._id,
+						created_by: (currentUser ? currentUser._id : 'anonymous'),
 					};
 					await updatePixel(pixel._id, data);
 				} catch (error) {
@@ -141,7 +141,7 @@ export default function Board() {
 					board_id: board._id,
 					position: { x, y },
 					color: selectedColor,
-					created_by: currentUser._id,
+					created_by: (currentUser ? currentUser._id : 'anonymous'),
 				};
 				await createPixel(data);
 			} catch (error) {
