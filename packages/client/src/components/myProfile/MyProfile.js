@@ -1,10 +1,8 @@
 /* eslint-disable max-len */
 /* eslint-disable no-underscore-dangle */
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
 	Box,
-	Button,
 	Flex,
 	Text,
 	Avatar,
@@ -20,9 +18,9 @@ import {
 	AccordionIcon,
 	Badge,
 } from '@chakra-ui/react';
-import { useAuth } from '../../providers/authProvider';
-import { fetchUserInfo, logoutUser } from '../../services/userService';
+import { fetchUserInfo } from '../../services/userService';
 import BoardCard from '../boardCard/boardCard';
+import { useAuth } from '../../providers/authProvider';
 
 const ProfilePage = () => {
 	const [userInfo, setUserInfo] = useState(null);
@@ -43,15 +41,6 @@ const ProfilePage = () => {
 		getUserInfo();
 	}, [token]);
 
-	const { setToken } = useAuth();
-	const navigate = useNavigate();
-
-	const handleLogout = async () => {
-		await logoutUser();
-		setToken(null);
-		navigate('/login', { replace: true });
-	};
-
 	if (errorMessage) {
 		return (
 			<Flex direction="column" alignItems="center" justifyContent="center" p={5} minHeight="100vh">
@@ -70,8 +59,8 @@ const ProfilePage = () => {
 		return <Box>Chargement...</Box>;
 	}
 
-	const ongoingBoards = userInfo.contributions.filter((c) => c.status === 'ongoing');
-	const finishedBoards = userInfo.contributions.filter((c) => c.status === 'finished');
+	const ongoingBoards = userInfo.contributions.filter((c) => c.board_id.status === 'ongoing');
+	const finishedBoards = userInfo.contributions.filter((c) => c.board_id.status === 'finished');
 	const totalPixels = userInfo.contributions.reduce((acc, contribution) => acc + contribution.update_number, 0);
 
 	return (
@@ -80,7 +69,6 @@ const ProfilePage = () => {
 			<Heading as="h2" size="xl" mt={5} mb={2}>{userInfo.userName}</Heading>
 			<Text fontSize="lg">{userInfo.email}</Text>
 			<Badge colorScheme="purple" variant="subtle" fontSize="lg">Total de pixels ajoutés: {totalPixels}</Badge>
-			<Button colorScheme="red" onClick={handleLogout} m={3}>Logout</Button>
 
 			<Accordion allowToggle w="full" mt={10}>
 				<AccordionItem>
@@ -93,7 +81,7 @@ const ProfilePage = () => {
 					<AccordionPanel pb={4}>
 						{ongoingBoards.length > 0 ? (
 							ongoingBoards.map((contribution) => (
-								<BoardCard key={contribution.board_id} board={contribution.board_id} />
+								<BoardCard key={contribution.board_id._id} board={contribution.board_id} />
 							))
 						) : (
 							<Text>Pas de contributions en cours.</Text>
@@ -111,7 +99,7 @@ const ProfilePage = () => {
 					<AccordionPanel pb={4}>
 						{finishedBoards.length > 0 ? (
 							finishedBoards.map((contribution) => (
-								<BoardCard key={contribution.board_id} board={contribution.board_id} />
+								<BoardCard key={contribution.board_id._id} board={contribution.board_id} />
 							))
 						) : (
 							<Text>Pas de contributions terminées.</Text>

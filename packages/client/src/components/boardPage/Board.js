@@ -4,7 +4,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
 	Box,
-	Container, Heading, Spinner, Stack, Stat, StatGroup, StatLabel, StatNumber, Text, Tooltip,
+	Container,
+	Heading, Spinner, Stack, Stat, StatGroup, StatLabel, StatNumber, Text, Tooltip, useToast,
 } from '@chakra-ui/react';
 import CountDownEndDate from '../countDownEndDate/CountDownEndDate';
 import ColorPicker from '../colorPicker/ColorPicker';
@@ -15,9 +16,11 @@ import { createPixel, updatePixel } from '../../services/pixelService';
 export default function Board() {
 	const { id } = useParams();
 	const { board, loading } = useBoard(id);
-	const { pixels, pixelsLoading } = usePixelByBoard(id);
+	const { pixels, pixelsLoading, refetch } = usePixelByBoard(id);
 	const [hoveredPixel, setHoveredPixel] = useState(null);
 	const [selectedColor, setSelectedColor] = useState('black');
+
+	const toast = useToast();
 
 	const [showTooltip, setShowTooltip] = useState(false);
 	const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
@@ -62,7 +65,7 @@ export default function Board() {
 		if (pixel) {
 			setTooltipData({
 				color: pixel.color,
-				user: pixel.created_by,
+				user: pixel.created_by.userName,
 				last_update: pixel.last_update,
 				update_number: pixel.update_number,
 			});
@@ -88,14 +91,31 @@ export default function Board() {
 		const y = Math.floor((e.clientY - rect.top) / 16);
 		const pixel = pixels.find((p) => p.position.x === x && p.position.y === y);
 		if (pixel) {
-			try {
-				const data = {
-					color: selectedColor,
-					created_by: pixel.created_by,
-				};
-				await updatePixel(pixel.id, data);
-			} catch (error) {
-				console.error(error);
+			if (board.override) {
+				try {
+					const data = {
+						color: selectedColor,
+						created_by: pixel.created_by,
+					};
+					await updatePixel(pixel._id, data);
+					refetch();
+				} catch (error) {
+					toast({
+						title: 'Error',
+						description: error.response.data ? error.response.data : 'An error occurred',
+						status: 'error',
+						duration: 5000,
+						isClosable: true,
+					});
+				}
+			} else {
+				toast({
+					title: 'Error',
+					description: 'Pixel already exists and cannot be overridden',
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+				});
 			}
 		} else {
 			try {
@@ -106,8 +126,15 @@ export default function Board() {
 					created_by: '661037a222cc3bf9908192c3',
 				};
 				await createPixel(data);
+				refetch();
 			} catch (error) {
-				console.error(error);
+				toast({
+					title: 'Error',
+					description: error.response.data ? error.response.data : 'An error occurred',
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+				});
 			}
 		}
 	};
@@ -158,7 +185,6 @@ export default function Board() {
 						padding="2"
 						left={tooltipPosition.x}
 						top={tooltipPosition.y}
-						hasArrow
 					>
 						<canvas
 							ref={canvasRef}
@@ -190,7 +216,7 @@ export default function Board() {
 
 					<Stat>
 						<StatLabel>Waiting Time</StatLabel>
-						<StatNumber>{`${board.waiting_time / 1000}s`}</StatNumber>
+						<StatNumber>{`${board.waiting_time}s`}</StatNumber>
 					</Stat>
 
 				</StatGroup>

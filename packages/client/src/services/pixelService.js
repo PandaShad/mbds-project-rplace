@@ -15,8 +15,8 @@ export const getPixelByBoardId = async (id) => {
 	return response.data;
 };
 
-export const updatePixel = async (data) => {
-	const response = await axios.put(API_ROUTES.updatePixel, data, {
+export const updatePixel = async (id, data) => {
+	const response = await axios.put(API_ROUTES.updatePixel(id), data, {
 		headers: {
 			'Content-Type': 'application/json',
 		},

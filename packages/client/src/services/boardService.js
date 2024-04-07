@@ -8,7 +8,7 @@ export const getBoardById = async (id) => {
 
 export const fetchOngoingBoards = async () => {
 	const response = await axios.get(
-		API_ROUTES.listOngoingBoards,
+		API_ROUTES.listOnGoingBoards,
 	);
 	return response.data;
 };

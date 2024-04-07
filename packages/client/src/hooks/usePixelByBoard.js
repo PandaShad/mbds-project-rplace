@@ -4,6 +4,7 @@ import { getPixelByBoardId } from '../services/pixelService';
 export const usePixelByBoard = (boardId) => {
 	const [pixels, setPixels] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [refetchPixels, setRefetchPixels] = useState(0);
 
 	useEffect(() => {
 		const fetchPixels = async () => {
@@ -18,7 +19,7 @@ export const usePixelByBoard = (boardId) => {
 		};
 
 		fetchPixels();
-	}, [boardId]);
+	}, [boardId, refetchPixels]);
 
-	return { pixels, loading };
+	return { pixels, loading, refetch: () => setRefetchPixels((prev) => prev + 1) };
 };

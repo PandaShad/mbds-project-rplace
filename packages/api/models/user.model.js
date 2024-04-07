@@ -12,7 +12,7 @@ const userSchema = new mongoose.Schema({
 		type: [{
 			board_id: {
 				type: mongoose.Schema.ObjectId,
-				ref: 'Pixel',
+				ref: 'Board',
 			},
 			updated_at: {
 				type: Date,
