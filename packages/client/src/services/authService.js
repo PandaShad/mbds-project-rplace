@@ -18,3 +18,12 @@ export const loginUser = async (loginData) => {
 	});
 	return response.data;
 };
+
+export const isAdmin = async () => {
+	const response = await axios.get(API_ROUTES.me);
+	try {
+		return response.data.role === 'admin';
+	} catch (error) {
+		return false;
+	}
+};

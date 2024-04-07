@@ -24,6 +24,7 @@ import {
 	fetchOngoingBoards,
 	fetchUpcomingBoards,
 } from '../../services/boardService';
+import { isAdmin } from '../../services/authService';
 
 const HomePage = () => {
 	const toast = useToast();
@@ -59,13 +60,23 @@ const HomePage = () => {
 	const [showCreateForm, setShowCreateForm] = useState(false);
 
 	const { token } = useAuth();
-
 	const useCreateBoardNavigation = () => {
 		const navigate = useNavigate();
 
-		const handleCreateBoard = () => {
+		const handleCreateBoard = async () => {
 			if (token) {
-				setShowCreateForm(true);
+				const isUserAdmin = await isAdmin();
+				if (isUserAdmin) {
+					setShowCreateForm(true);
+				} else {
+					toast({
+						title: 'Unauthorized',
+						description: 'You are not authorized to create a board',
+						status: 'error',
+						duration: 5000,
+						isClosable: true,
+					});
+				}
 			} else {
 				toast({
 					title: 'Please log in',
