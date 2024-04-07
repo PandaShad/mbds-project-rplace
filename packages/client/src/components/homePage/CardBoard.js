@@ -23,12 +23,12 @@ const CardBoard = ({
 			</CardHeader>
 
 			<CardBody>
-				<Stack divider={<StackDivider />} spacing="4">
+				<Stack divider={<StackDivider />} spacing="2">
 					<Box>
 						<Heading size="xs" textTransform="uppercase" color="teal">
 							Description
 						</Heading>
-						<Text pt="2" fontSize="sm">
+						<Text fontSize="sm">
 							{description}
 						</Text>
 					</Box>
@@ -36,10 +36,10 @@ const CardBoard = ({
 						<Heading size="xs" textTransform="uppercase" color="teal">
 							Informations
 						</Heading>
-						<Text pt="2" fontSize="sm">
+						<Text fontSize="sm">
 							Dimensions: {dimensions}
 						</Text>
-						<Text pt="2" fontSize="sm">
+						<Text fontSize="sm">
 							Waiting Time: {waitingTime} minutes
 						</Text>
 					</Box>
@@ -47,7 +47,7 @@ const CardBoard = ({
 						<Heading size="xs" textTransform="uppercase" color="teal">
 							Time Remaining
 						</Heading>
-						<Text pt="2" fontSize="sm">
+						<Text fontSize="sm">
 							{timeRemaining}
 						</Text>
 					</Box>
