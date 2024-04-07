@@ -1,6 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-underscore-dangle */
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+	useCallback,
+	useEffect, useRef, useState,
+} from 'react';
 import { useParams } from 'react-router-dom';
 import {
 	Box,
@@ -12,6 +15,8 @@ import ColorPicker from '../colorPicker/ColorPicker';
 import { useBoard } from '../../hooks/useBoard';
 import { usePixelByBoard } from '../../hooks/usePixelByBoard';
 import { createPixel, updatePixel } from '../../services/pixelService';
+import { useAuth } from '../../providers/authProvider';
+import { useWebSocket } from '../../hooks/useWebSocket';
 
 export default function Board() {
 	const { id } = useParams();
@@ -19,6 +24,7 @@ export default function Board() {
 	const { pixels, pixelsLoading, refetch } = usePixelByBoard(id);
 	const [hoveredPixel, setHoveredPixel] = useState(null);
 	const [selectedColor, setSelectedColor] = useState('black');
+	const { currentUser } = useAuth();
 
 	const toast = useToast();
 
@@ -27,6 +33,19 @@ export default function Board() {
 	const [tooltipData, setTooltipData] = useState(null);
 
 	const canvasRef = useRef(null);
+
+	const onMessage = useCallback((data) => {
+		// eslint-disable-next-line no-console
+		console.log('data', data);
+	}, []);
+
+	const onPixel = useCallback((data) => {
+		// eslint-disable-next-line no-console
+		console.log('data', data);
+		refetch();
+	}, [refetch]);
+
+	useWebSocket('http://localhost:8000', onMessage, onPixel);
 
 	useEffect(() => {
 		if (!board || !canvasRef.current || !pixels) return undefined;
@@ -95,10 +114,9 @@ export default function Board() {
 				try {
 					const data = {
 						color: selectedColor,
-						created_by: pixel.created_by,
+						created_by: currentUser._id,
 					};
 					await updatePixel(pixel._id, data);
-					refetch();
 				} catch (error) {
 					toast({
 						title: 'Error',
@@ -123,10 +141,9 @@ export default function Board() {
 					board_id: board._id,
 					position: { x, y },
 					color: selectedColor,
-					created_by: '661037a222cc3bf9908192c3',
+					created_by: currentUser._id,
 				};
 				await createPixel(data);
-				refetch();
 			} catch (error) {
 				toast({
 					title: 'Error',

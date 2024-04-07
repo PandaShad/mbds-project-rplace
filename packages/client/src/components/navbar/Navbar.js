@@ -18,7 +18,6 @@ import './navbar.css';
 import { useAuth } from '../../providers/authProvider';
 import { useDarkMode } from '../../contexts/DarkModeContext';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
-import { useAuth } from '../../providers/authProvider';
 
 function NavbarCompenant(args) {
 	const [isOpen, setIsOpen] = useState(false);
@@ -38,7 +37,7 @@ function NavbarCompenant(args) {
 	return (
 		<div>
 			<Navbar {...args} expand="md" style={{ background: '#F1F1F1' }}>
-				<NavbarBrand href="/">
+				<NavbarBrand href="/home">
 					<div className="logo-container d-flex ">
 						<img alt="Logo" src={logo} className="logo-image " />
 						<img alt="Logo" src={logo2} className="logo-image ms-1" />
