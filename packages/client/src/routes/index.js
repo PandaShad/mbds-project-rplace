@@ -2,6 +2,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import Login from '../components/loginPage/Login';
 import MyProfile from '../components/myProfile/MyProfile';
 import SignUpPage from '../components/signUp/SignUp';
+import HomePage from '../components/homePage/Home';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicRoute } from './PublicRoute';
 import Board from '../components/boardPage/Board';
@@ -44,6 +45,10 @@ const Routes = () => {
 				{
 					path: '/board/:id',
 					element: <Board />,
+				},
+				{
+					path: '/home',
+					element: <HomePage />,
 				},
 			],
 		},

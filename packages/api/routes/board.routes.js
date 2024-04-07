@@ -21,9 +21,9 @@ boardRouter.post('/create', [verifyToken, isAdmin], async (req, res) => {
 				height: req.body.dimension.height,
 			},
 			waiting_time: req.body.waiting_time,
-			start_date: Date.now(),
+			start_date: req.body.start_date,
 			end_date: req.body.end_date,
-			status: 'ongoing',
+			status: req.body.status,
 			created_by: req.body.created_by,
 		});
 		await newBoard.save();
@@ -48,6 +48,15 @@ boardRouter.get('/list-finished', async (_, res) => {
 		return res.status(200).send(boards);
 	} catch (error) {
 		return res.status(500).send(`There was a problem listing the finished boards: ${error}`);
+	}
+});
+
+boardRouter.get('/list-upcoming', async (_, res) => {
+	try {
+		const boards = await Board.find({ status: 'upcoming' });
+		return res.status(200).send(boards);
+	} catch (error) {
+		return res.status(500).send(`There was a problem listing the upcoming boards: ${error}`);
 	}
 });
 
