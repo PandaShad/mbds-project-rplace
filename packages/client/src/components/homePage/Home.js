@@ -1,6 +1,4 @@
 import React, { useState, useEffect } from 'react';
-// eslint-disable-next-line import/no-extraneous-dependencies
-import axios from 'axios';
 import {
 	Box,
 	Container,
@@ -20,7 +18,12 @@ import { useNavigate } from 'react-router-dom';
 import CreateBoard from './CreateBoard';
 import { useAuth } from '../../providers/authProvider';
 import CardBoard from './CardBoard';
-import { API_ROUTES } from '../../utils/apiRoutes';
+import {
+	fetchCountUsers,
+	fetchFinishedBoards,
+	fetchOngoingBoards,
+	fetchUpcomingBoards,
+} from '../../services/boardService';
 
 const HomePage = () => {
 	const toast = useToast();
@@ -31,80 +34,22 @@ const HomePage = () => {
 	const [userCount, setUserCount] = useState(0);
 
 	useEffect(() => {
-		const fetchOngoingBoards = async () => {
-			try {
-				const response = await axios.get(
-					API_ROUTES.listOngoingBoards,
-				);
-				setOngoingBoards(response.data);
-			} catch (error) {
-				toast({
-					title: 'Error Loading ongoing boards',
-					description: error.message,
-					status: 'error',
-					duration: 5000,
-					isClosable: true,
-				});
-			}
-		};
-
-		const fetchFinishedBoards = async () => {
-			try {
-				const response = await axios.get(
-					API_ROUTES.listFinishedBoards,
-				);
-				setFinishedBoards(response.data);
-			} catch (error) {
-				toast({
-					title: 'Error Loading finished boards',
-					description: error.message,
-					status: 'error',
-					duration: 5000,
-					isClosable: true,
-				});
-			}
-		};
-
-		const fetchCountUsers = async () => {
-			try {
-				const response = await axios.get(
-					API_ROUTES.countUsers,
-				);
-				setUserCount(response.data.count);
-			} catch (error) {
-				toast({
-					title: 'Error Loading user count',
-					description: error.message,
-					status: 'error',
-					duration: 5000,
-					isClosable: true,
-				});
-			}
-		};
-
-		const fetchUpcomingBoards = async () => {
-			try {
-				const response = await axios.get(
-					API_ROUTES.listUpcomingBoards,
-				);
-				setUpcomingBoards(response.data);
-			} catch (error) {
-				toast({
-					title: 'Error Loading upcoming boards',
-					description: error.message,
-					status: 'error',
-					duration: 5000,
-					isClosable: true,
-				});
-			}
-		};
-
 		const fetchData = async () => {
 			setLoading(true);
-			await fetchOngoingBoards();
-			await fetchFinishedBoards();
-			await fetchUpcomingBoards();
-			await fetchCountUsers();
+			try {
+				setOngoingBoards(await fetchOngoingBoards());
+				setFinishedBoards(await fetchFinishedBoards());
+				setUpcomingBoards(await fetchUpcomingBoards());
+				setUserCount(await fetchCountUsers());
+			} catch (error) {
+				toast({
+					title: 'Error Loading',
+					description: error.message,
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+				});
+			}
 			setLoading(false);
 		};
 
