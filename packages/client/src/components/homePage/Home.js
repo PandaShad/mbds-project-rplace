@@ -168,7 +168,10 @@ const HomePage = () => {
 				<Stack direction="horizontal" overflowX="auto">
 					{ongoingBoards.map((board) => (
 						<CardBoard
-							key={board.id}
+							// eslint-disable-next-line no-underscore-dangle
+							key={board._id}
+							// eslint-disable-next-line no-underscore-dangle
+							id={board._id}
 							title={board.title}
 							description={board.description}
 							timeRemaining={calculateTimeRemaining(board.end_date)}
@@ -189,7 +192,10 @@ const HomePage = () => {
 				<Stack direction="horizontal" overflowX="auto" flexWrap="nowrap" spacing="4">
 					{finishedBoards.map((board) => (
 						<CardBoard
-							key={board.id}
+							// eslint-disable-next-line no-underscore-dangle
+							key={board._id}
+							// eslint-disable-next-line no-underscore-dangle
+							id={board._id}
 							title={board.title}
 							description={board.description}
 							timeRemaining={calculateTimeRemaining(board.end_date)}
@@ -210,7 +216,10 @@ const HomePage = () => {
 				<Stack direction="horizontal" overflowX="auto">
 					{upcomingBoards.map((board) => (
 						<CardBoard
-							key={board.id}
+							// eslint-disable-next-line no-underscore-dangle
+							key={board._id}
+							// eslint-disable-next-line no-underscore-dangle
+							id={board._id}
 							title={board.title}
 							description={board.description}
 							timeRemaining={calculateTimeRemaining(board.end_date)}
