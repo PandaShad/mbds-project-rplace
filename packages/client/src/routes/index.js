@@ -1,4 +1,4 @@
-import { RouterProvider, createBrowserRouter } from 'react-router-dom';
+import { RouterProvider, createBrowserRouter, Navigate } from 'react-router-dom';
 import Login from '../components/loginPage/Login';
 import MyProfile from '../components/myProfile/MyProfile';
 import SignUpPage from '../components/signUp/SignUp';
@@ -22,6 +22,10 @@ const Routes = () => {
 				{
 					path: '/signup',
 					element: <SignUpPage />,
+				},
+				{
+					path: '/',
+					element: <Navigate to="/home" replace />,
 				},
 			],
 		},
