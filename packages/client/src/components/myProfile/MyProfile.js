@@ -20,15 +20,18 @@ import {
 } from '@chakra-ui/react';
 import { fetchUserInfo } from '../../services/userService';
 import BoardCard from '../boardCard/boardCard';
+import { useAuth } from '../../providers/authProvider';
 
 const ProfilePage = () => {
 	const [userInfo, setUserInfo] = useState(null);
 	const [errorMessage, setErrorMessage] = useState('');
 
+	const { token } = useAuth();
+
 	useEffect(() => {
 		const getUserInfo = async () => {
 			try {
-				const userData = await fetchUserInfo();
+				const userData = await fetchUserInfo(token);
 				setUserInfo(userData);
 			} catch (error) {
 				setErrorMessage('Problème de récupération du profil utilisateur.');
@@ -36,7 +39,7 @@ const ProfilePage = () => {
 		};
 
 		getUserInfo();
-	}, []);
+	}, [token]);
 
 	if (errorMessage) {
 		return (
@@ -56,8 +59,8 @@ const ProfilePage = () => {
 		return <Box>Chargement...</Box>;
 	}
 
-	const ongoingBoards = userInfo.contributions.filter((c) => c.board_id.status === 'ongoing');
-	const finishedBoards = userInfo.contributions.filter((c) => c.board_id.status === 'finished');
+	const ongoingBoards = userInfo.contributions.filter((c) => c.status === 'ongoing');
+	const finishedBoards = userInfo.contributions.filter((c) => c.status === 'finished');
 	const totalPixels = userInfo.contributions.reduce((acc, contribution) => acc + contribution.update_number, 0);
 
 	return (
@@ -78,7 +81,7 @@ const ProfilePage = () => {
 					<AccordionPanel pb={4}>
 						{ongoingBoards.length > 0 ? (
 							ongoingBoards.map((contribution) => (
-								<BoardCard key={contribution.board_id._id} board={contribution.board_id} />
+								<BoardCard key={contribution.board_id} board={contribution.board_id} />
 							))
 						) : (
 							<Text>Pas de contributions en cours.</Text>
@@ -96,7 +99,7 @@ const ProfilePage = () => {
 					<AccordionPanel pb={4}>
 						{finishedBoards.length > 0 ? (
 							finishedBoards.map((contribution) => (
-								<BoardCard key={contribution.board_id._id} board={contribution.board_id} />
+								<BoardCard key={contribution.board_id} board={contribution.board_id} />
 							))
 						) : (
 							<Text>Pas de contributions terminées.</Text>

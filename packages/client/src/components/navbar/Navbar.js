@@ -14,10 +14,10 @@ import { Button } from '@chakra-ui/react';
 import logo from '../../images/logo.png';
 import logo2 from '../../images/logo2.png';
 import './navbar.css';
-import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { useDarkMode } from '../../contexts/DarkModeContext';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { useAuth } from '../../providers/authProvider';
 
 function NavbarCompenant(args) {
 	const [isOpen, setIsOpen] = useState(false);

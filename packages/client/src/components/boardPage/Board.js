@@ -3,16 +3,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
-	Container, Heading, Spinner, Stack, Stat, StatGroup, StatLabel, StatNumber, Text,
+	Box,
+	Container, Heading, Spinner, Stack, Stat, StatGroup, StatLabel, StatNumber, Text, Tooltip,
 } from '@chakra-ui/react';
-import io from 'socket.io-client';
 import CountDownEndDate from '../countDownEndDate/CountDownEndDate';
 import ColorPicker from '../colorPicker/ColorPicker';
 import { useBoard } from '../../hooks/useBoard';
 import { usePixelByBoard } from '../../hooks/usePixelByBoard';
 import { createPixel, updatePixel } from '../../services/pixelService';
-
-const socket = io('http://localhost:8000');
 
 export default function Board() {
 	const { id } = useParams();
@@ -20,6 +18,11 @@ export default function Board() {
 	const { pixels, pixelsLoading } = usePixelByBoard(id);
 	const [hoveredPixel, setHoveredPixel] = useState(null);
 	const [selectedColor, setSelectedColor] = useState('black');
+
+	const [showTooltip, setShowTooltip] = useState(false);
+	const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
+	const [tooltipData, setTooltipData] = useState(null);
+
 	const canvasRef = useRef(null);
 
 	useEffect(() => {
@@ -48,37 +51,26 @@ export default function Board() {
 		};
 	}, [board, pixels, hoveredPixel]);
 
-	useEffect(() => {
-		socket.on('pixel created', (newPixel) => {
-			if (newPixel.board_id === id) {
-				const canvas = canvasRef.current;
-				const ctx = canvas.getContext('2d');
-				ctx.fillStyle = newPixel.color;
-				ctx.fillRect(newPixel.position.x * 16, newPixel.position.y * 16, 16, 16);
-			}
-		});
-
-		socket.on('pixel updated', (updatedPixel) => {
-			if (updatedPixel.board_id === id) {
-				const canvas = canvasRef.current;
-				const ctx = canvas.getContext('2d');
-				const pixel = pixels.find((p) => p.id === updatedPixel.id);
-				ctx.clearRect(pixel.position.x * 16, pixel.position.y * 16, 16, 16);
-				ctx.fillStyle = updatedPixel.color;
-				ctx.fillRect(updatedPixel.position.x * 16, updatedPixel.position.y * 16, 16, 16);
-			}
-		});
-
-		return () => {
-			socket.off('pixel created');
-			socket.off('pixel updated');
-		};
-	}, [id, pixels]);
-
 	const handleMouseMove = (e) => {
 		const rect = canvasRef.current.getBoundingClientRect();
 		const x = Math.floor((e.clientX - rect.left) / 16);
 		const y = Math.floor((e.clientY - rect.top) / 16);
+
+		setTooltipPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+
+		const pixel = pixels.find((p) => p.position.x === x && p.position.y === y);
+		if (pixel) {
+			setTooltipData({
+				color: pixel.color,
+				user: pixel.created_by,
+				last_update: pixel.last_update,
+				update_number: pixel.update_number,
+			});
+		} else {
+			setTooltipData(null);
+		}
+
+		setShowTooltip(true);
 		setHoveredPixel({ x, y });
 	};
 
@@ -146,15 +138,39 @@ export default function Board() {
 
 				</Stack>
 
-				<canvas
-					ref={canvasRef}
-					width={board.dimension.width * 16}
-					height={board.dimension.height * 16}
-					style={{ border: '1px solid black', position: 'relative' }}
-					onMouseMove={handleMouseMove}
-					onMouseOut={handleMouseOut}
-					onMouseDown={handleMouseDown}
-				/>
+				<Box onMouseLeave={() => setShowTooltip(false)}>
+					<Tooltip
+						isOpen={showTooltip}
+						label={tooltipData
+							? (
+								<>
+									<Text fontSize="sm" marginBottom="0px">Color: {tooltipData.color}</Text>
+									<Text fontSize="sm" marginBottom="0px">User: {tooltipData.user}</Text>
+									<Text fontSize="sm" marginBottom="0px">Last Update: { new Date(tooltipData.last_update).toLocaleDateString()}</Text>
+									<Text fontSize="sm" marginBottom="0px">Update Number: {tooltipData.update_number}</Text>
+								</>
+							) : 'No pixel'}
+						bg="teal.500"
+						color="white"
+						placement="top"
+						borderRadius="md"
+						fontSize="sm"
+						padding="2"
+						left={tooltipPosition.x}
+						top={tooltipPosition.y}
+						hasArrow
+					>
+						<canvas
+							ref={canvasRef}
+							width={board.dimension.width * 16}
+							height={board.dimension.height * 16}
+							style={{ border: '1px solid black', position: 'relative' }}
+							onMouseMove={handleMouseMove}
+							onMouseOut={handleMouseOut}
+							onMouseDown={handleMouseDown}
+						/>
+					</Tooltip>
+				</Box>
 
 				<ColorPicker
 					selectedColor={selectedColor}
