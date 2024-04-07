@@ -1,8 +1,10 @@
 /* eslint-disable max-len */
 /* eslint-disable no-underscore-dangle */
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
 	Box,
+	Button,
 	Flex,
 	Text,
 	Avatar,
@@ -18,7 +20,8 @@ import {
 	AccordionIcon,
 	Badge,
 } from '@chakra-ui/react';
-import { fetchUserInfo } from '../../services/userService';
+import { useAuth } from '../../providers/authProvider';
+import { fetchUserInfo, logoutUser } from '../../services/userService';
 import BoardCard from '../boardCard/boardCard';
 
 const ProfilePage = () => {
@@ -37,6 +40,15 @@ const ProfilePage = () => {
 
 		getUserInfo();
 	}, []);
+
+	const { setToken } = useAuth();
+	const navigate = useNavigate();
+
+	const handleLogout = async () => {
+		await logoutUser();
+		setToken(null);
+		navigate('/login', { replace: true });
+	};
 
 	if (errorMessage) {
 		return (
@@ -66,6 +78,7 @@ const ProfilePage = () => {
 			<Heading as="h2" size="xl" mt={5} mb={2}>{userInfo.userName}</Heading>
 			<Text fontSize="lg">{userInfo.email}</Text>
 			<Badge colorScheme="purple" variant="subtle" fontSize="lg">Total de pixels ajoutés: {totalPixels}</Badge>
+			<Button colorScheme="red" onClick={handleLogout} m={3}>Logout</Button>
 
 			<Accordion allowToggle w="full" mt={10}>
 				<AccordionItem>
