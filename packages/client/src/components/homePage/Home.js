@@ -10,25 +10,17 @@ import {
 	Button,
 	useToast,
 	Stack,
+	Modal,
+	ModalOverlay,
+	ModalContent,
+	ModalHeader,
+	ModalBody,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import CreateBoard from './CreateBoard';
 import { useAuth } from '../../providers/authProvider';
 import CardBoard from './CardBoard';
 import { API_ROUTES } from '../../utils/apiRoutes';
-
-/*
-const mockOngoingBoards = [
-	{ id: 1, name: 'Ongoing Board 1' },
-	{ id: 2, name: 'Ongoing Board 2' },
-	{ id: 3, name: 'Ongoing Board 3' },
-];
-
-const mockFinishedBoards = [
-	{ id: 4, name: 'Finished Board 1' },
-	{ id: 5, name: 'Finished Board 2' },
-	{ id: 6, name: 'Finished Board 3' },
-];*/
 
 const HomePage = () => {
 	const toast = useToast();
@@ -273,7 +265,15 @@ const HomePage = () => {
 			>
 				Create New Board
 			</Button>
-			{showCreateForm && <CreateBoard onClose={handleCloseForm} />}
+			<Modal isOpen={showCreateForm} onClose={handleCloseForm}>
+				<ModalOverlay />
+				<ModalContent>
+					<ModalHeader>Create New Board</ModalHeader>
+					<ModalBody>
+						<CreateBoard onClose={handleCloseForm} />
+					</ModalBody>
+				</ModalContent>
+			</Modal>
 		</Container>
 	);
 };
