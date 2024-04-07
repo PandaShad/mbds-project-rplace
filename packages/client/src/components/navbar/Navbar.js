@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/order */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Collapse,
 	Navbar,
@@ -14,16 +15,15 @@ import { Button } from '@chakra-ui/react';
 import logo from '../../images/logo.png';
 import logo2 from '../../images/logo2.png';
 import './navbar.css';
-import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../providers/authProvider';
 import { useDarkMode } from '../../contexts/DarkModeContext';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 function NavbarCompenant(args) {
 	const [isOpen, setIsOpen] = useState(false);
-	const { isAuthenticated } = useAuth();
-	const navigate = useNavigate();
+
 	const { isDarkMode, toggleDarkMode } = useDarkMode();
+	const { token } = useAuth();
 
 	const toggle = () => setIsOpen(!isOpen);
 
@@ -31,6 +31,9 @@ function NavbarCompenant(args) {
 		toggleDarkMode();
 	};
 
+	useEffect(() => {
+		toggleDarkMode();
+	}, []);
 	return (
 		<div>
 			<Navbar {...args} expand="md" style={{ background: '#F1F1F1' }}>
@@ -44,22 +47,17 @@ function NavbarCompenant(args) {
 				<Collapse isOpen={isOpen} navbar>
 					<Nav className="me-auto" navbar>
 						<NavItem>
-							<NavLink href="/">Explorer Boards</NavLink>
-						</NavItem>
-						<NavItem>
-							<NavLink href="/">
-								Mes Boards
-							</NavLink>
+							<NavLink> </NavLink>
 						</NavItem>
 					</Nav>
 					<Button onClick={handleDarkModeToggle} className="me-2" variant="ghost">
 						{isDarkMode ? <SunIcon /> : <MoonIcon />}
 					</Button>
 					{
-						isAuthenticated ? (
-							<Button colorScheme="teal" onClick={() => navigate('/myprofile')}>Profil</Button>
+						token ? (
+							<Button colorScheme="teal"><NavLink href="/myprofile">Profil</NavLink></Button>
 						) : (
-							<Button colorScheme="teal" onClick={() => navigate('/login')}>Log in</Button>
+							<Button colorScheme="teal"><NavLink href="/login">Log in</NavLink></Button>
 						)
 					}
 				</Collapse>
