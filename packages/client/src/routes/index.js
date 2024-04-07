@@ -7,6 +7,7 @@ import { ProtectedRoute } from './ProtectedRoute';
 import { PublicRoute } from './PublicRoute';
 import Board from '../components/boardPage/Board';
 import AdminBoardList from '../components/adminBoardListPage/AdminBoardList';
+import { AdminRoute } from './AdminRoute';
 
 const Routes = () => {
 	const routesForNotAuthenticatedOnly = [
@@ -35,6 +36,15 @@ const Routes = () => {
 					path: '/myprofile',
 					element: <MyProfile />,
 				},
+			],
+		},
+	];
+
+	const routesForAdminOnly = [
+		{
+			path: '/',
+			element: <AdminRoute />,
+			children: [
 				{
 					path: '/boards',
 					element: <AdminBoardList />,
@@ -63,6 +73,7 @@ const Routes = () => {
 		...routesForNotAuthenticatedOnly,
 		...routesForAuthenticatedOnly,
 		...routesForEveryOne,
+		...routesForAdminOnly,
 	]);
 
 	return (

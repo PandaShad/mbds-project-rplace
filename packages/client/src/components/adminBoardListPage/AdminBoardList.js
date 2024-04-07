@@ -2,18 +2,26 @@
 import {
 	Button,
 	Heading,
+	Select,
 	Spinner, Stack, Table, TableCaption, TableContainer, Tbody, Td, Th, Thead, Tr,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useBoards } from '../../hooks/useBoards';
 
 export default function AdminBoardList() {
 	const { boards, loading } = useBoards();
 	const [sortConfig, setSortConfig] = useState({ key: null, direction: 'ascending' });
+	const [statusFilter, setStatusFilter] = useState('');
+	const [authorFilter, setAuthorFilter] = useState('');
 
-	function sortBoards() {
-		if (!sortConfig.key) return boards;
-		const sortedBoards = [...boards].sort((a, b) => {
+	const authors = useMemo(() => {
+		const uniqueAuthors = new Set(boards.map((board) => board.created_by.userName));
+		return [...uniqueAuthors];
+	}, [boards]);
+
+	function sortBoards(filteredBoards) {
+		if (!sortConfig.key) return filteredBoards;
+		const sortedBoards = [...filteredBoards].sort((a, b) => {
 			if (a[sortConfig.key] < b[sortConfig.key]) {
 				return sortConfig.direction === 'ascending' ? -1 : 1;
 			}
@@ -25,6 +33,11 @@ export default function AdminBoardList() {
 		return sortedBoards;
 	}
 
+	function filterBoards(array) {
+		return array.filter((board) => (statusFilter ? board.status === statusFilter : true)
+						&& (authorFilter ? board.created_by.userName === authorFilter : true));
+	}
+
 	const handleSort = (key) => {
 		const direction = sortConfig.key === key && sortConfig.direction === 'ascending' ? 'descending' : 'ascending';
 		setSortConfig({ key, direction });
@@ -34,7 +47,7 @@ export default function AdminBoardList() {
 		return <Spinner color="teal.500" size="xl" />;
 	}
 
-	const sortedBoards = sortBoards();
+	const filteredAndSortedBoards = sortBoards(filterBoards(boards));
 
 	return (
 		<Stack align="center" overflowX="auto" flexWrap="nowrap" spacing="4">
@@ -63,6 +76,18 @@ export default function AdminBoardList() {
 				</Button>
 			</Stack>
 
+			<Stack direction="row" align="center" spacing="4">
+				<Select placeholder="Filter by Author" onChange={(e) => setAuthorFilter(e.target.value)}>
+					{authors.map((author) => (
+						<option key={author} value={author}>{author}</option>
+					))}
+				</Select>
+				<Select placeholder="Filter by Status" onChange={(e) => setStatusFilter(e.target.value)}>
+					<option value="ongoing">OnGoing</option>
+					<option value="finished">Finished</option>
+				</Select>
+			</Stack>
+
 			<TableContainer>
 				<Table variant="simple">
 					<TableCaption>Boards</TableCaption>
@@ -79,7 +104,7 @@ export default function AdminBoardList() {
 						</Tr>
 					</Thead>
 					<Tbody>
-						{sortedBoards.map((board) => (
+						{filteredAndSortedBoards.map((board) => (
 							<Tr key={board._id}>
 								<Td>{board.title}</Td>
 								<Td>{board.created_by.userName}</Td>
