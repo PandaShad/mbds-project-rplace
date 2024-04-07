@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable import/order */
 /* eslint-disable import/no-extraneous-dependencies */
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
 	Collapse,
 	Navbar,
@@ -30,6 +31,9 @@ function NavbarCompenant(args) {
 		toggleDarkMode();
 	};
 
+	useEffect(() => {
+		toggleDarkMode();
+	}, []);
 	return (
 		<div>
 			<Navbar {...args} expand="md" style={{ background: '#F1F1F1' }}>
@@ -43,12 +47,7 @@ function NavbarCompenant(args) {
 				<Collapse isOpen={isOpen} navbar>
 					<Nav className="me-auto" navbar>
 						<NavItem>
-							<NavLink href="/">Explorer Boards</NavLink>
-						</NavItem>
-						<NavItem>
-							<NavLink href="/">
-								Mes Boards
-							</NavLink>
+							<NavLink> </NavLink>
 						</NavItem>
 					</Nav>
 					<Button onClick={handleDarkModeToggle} className="me-2" variant="ghost">
