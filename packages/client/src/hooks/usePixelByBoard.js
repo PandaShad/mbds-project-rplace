@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { getPixelByBoardId } from '../services/pixelService';
 
 export const usePixelByBoard = (boardId) => {
@@ -21,5 +21,9 @@ export const usePixelByBoard = (boardId) => {
 		fetchPixels();
 	}, [boardId, refetchPixels]);
 
-	return { pixels, loading, refetch: () => setRefetchPixels((prev) => prev + 1) };
+	const refetch = useCallback(() => {
+		setRefetchPixels((prev) => prev + 1);
+	}, []);
+
+	return { pixels, loading, refetch };
 };
