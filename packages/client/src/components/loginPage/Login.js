@@ -70,7 +70,7 @@ export default function LoginPage() {
 				</Heading>
 				<Text color="gray.500">
 					Don&apos;t have an account?{' '}
-					<Link href="/signin" color="black">Sign up</Link>
+					<Link href="/signup" color="black">Sign up</Link>
 				</Text>
 
 				<Box
