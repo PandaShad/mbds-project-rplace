@@ -1,4 +1,3 @@
-// CreateBoard.jsx
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -49,6 +48,17 @@ const CreateBoard = ({ onClose }) => {
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
+		let status = '';
+		if (formData.startDate > new Date()) {
+			status = 'upcoming';
+		}
+		if (formData.startDate <= new Date() && formData.endDate >= new Date()) {
+			status = 'ongoing';
+		}
+		if (formData.endDate < new Date()) {
+			status = 'finished';
+		}
+		const user = await axios.get('http://localhost:8000/api/auth/me');
 		const boardData	= {
 			title: formData.title,
 			override: formData.override,
@@ -57,11 +67,12 @@ const CreateBoard = ({ onClose }) => {
 				width: formData.width,
 				height: formData.height,
 			},
-			waitingTime: formData.waitingTime,
-			startDate: formData.startDate,
-			endDate: formData.endDate,
-			status: '',
-			createdBy: '',
+			waiting_time: formData.waitingTime,
+			start_date: formData.startDate,
+			end_date: formData.endDate,
+			status,
+			// eslint-disable-next-line no-underscore-dangle
+			created_by: user.data._id,
 		};
 		console.log(boardData);
 
