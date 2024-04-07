@@ -83,4 +83,13 @@ authRouter.get('/logout', (_, res) => {
 	res.status(200).send({ auth: false, token: null });
 });
 
+authRouter.get('/count', async (_, res) => {
+	try {
+		const count = await User.countDocuments();
+		return res.status(200).send({ count });
+	} catch (error) {
+		return res.status(500).send(`There was a problem counting the users: ${error}`);
+	}
+});
+
 module.exports = authRouter;

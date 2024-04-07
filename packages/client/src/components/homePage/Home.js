@@ -33,6 +33,7 @@ const HomePage = () => {
 	const [ongoingBoards, setOngoingBoards] = useState([]);
 	const [finishedBoards, setFinishedBoards] = useState([]);
 	const [loading, setLoading] = useState(true);
+	const [userCount, setUserCount] = useState(0);
 
 	useEffect(() => {
 		const fetchOngoingBoards = async () => {
@@ -69,10 +70,28 @@ const HomePage = () => {
 			}
 		};
 
+		const fetchCountUsers = async () => {
+			try {
+				const response = await axios.get(
+					'http://localhost:8000/api/auth/count',
+				);
+				setUserCount(response.data.count);
+			} catch (error) {
+				toast({
+					title: 'Error Loading',
+					description: error.message,
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+				});
+			}
+		};
+
 		const fetchData = async () => {
 			setLoading(true);
 			await fetchOngoingBoards();
 			await fetchFinishedBoards();
+			await fetchCountUsers();
 			setLoading(false);
 		};
 
@@ -122,6 +141,14 @@ const HomePage = () => {
 			<Box mb="8">
 				<Flex alignItems="center" mb="4">
 					<Heading as="h2" size="md" mr="2">
+						Registered Users - {userCount}
+					</Heading>
+					{loading && <Spinner size="lg" />}
+				</Flex>
+			</Box>
+			<Box mb="8">
+				<Flex alignItems="center" mb="4">
+					<Heading as="h2" size="md" mr="2">
 						Ongoing Boards - {ongoingBoards.length}
 					</Heading>
 					{loading && <Spinner size="lg" />}
@@ -145,7 +172,7 @@ const HomePage = () => {
 					</SimpleGrid>
 				)}
 			</Box>
-			<Box>
+			<Box mb="8">
 				<Flex alignItems="center" mb="4">
 					<Heading as="h2" size="md" mr="2">
 						Finished Boards - {finishedBoards.length}
