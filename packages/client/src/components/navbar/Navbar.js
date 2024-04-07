@@ -18,6 +18,7 @@ import './navbar.css';
 import { useAuth } from '../../providers/authProvider';
 import { useDarkMode } from '../../contexts/DarkModeContext';
 import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+import { useAuth } from '../../providers/authProvider';
 
 function NavbarCompenant(args) {
 	const [isOpen, setIsOpen] = useState(false);

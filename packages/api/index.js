@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable import/extensions */
 const express = require('express');
+const http = require('http');
 const { json, urlencoded } = require('express');
 const cors = require('cors');
 
@@ -12,6 +13,7 @@ const connectToDb = require('./database/conn.js');
 
 const app = express();
 const port = 8000;
+const server = http.createServer(app);
 
 require('dotenv').config();
 require('./tasks/updateBoardStatus.task.js');
@@ -28,7 +30,7 @@ app.use(`${prefix}/pixel`, pixelRouter);
 
 connectToDb();
 
-app.listen(port, () => {
+server.listen(port, () => {
 	// eslint-disable-next-line no-console
 	console.log(`Server listening on ${port}`);
 });

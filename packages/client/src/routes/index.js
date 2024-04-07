@@ -5,6 +5,7 @@ import SignUpPage from '../components/signUp/SignUp';
 import HomePage from '../components/homePage/Home';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicRoute } from './PublicRoute';
+import Board from '../components/boardPage/Board';
 
 const Routes = () => {
 	const routesForNotAuthenticatedOnly = [
@@ -41,6 +42,10 @@ const Routes = () => {
 		{
 			path: '/',
 			children: [
+				{
+					path: '/board/:id',
+					element: <Board />,
+				},
 				{
 					path: '/home',
 					element: <HomePage />,

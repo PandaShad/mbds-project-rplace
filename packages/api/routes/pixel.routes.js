@@ -1,5 +1,6 @@
 const { Router, json, urlencoded } = require('express');
 const Pixel = require('../models/pixel.model');
+const Board = require('../models/board.model');
 const { updateUserContributions } = require('../services/user.service');
 
 const pixelRouter = Router();
@@ -12,6 +13,15 @@ pixelRouter.post('/create', async (req, res) => {
 			board_id: req.body.board_id,
 			position: req.body.position,
 		});
+
+		const board = await Board.findById(req.body.board_id);
+		if (!board) {
+			return res.status(404).send('Board not found');
+		}
+
+		if (board.status !== 'ongoing' || board.end_date < Date.now()) {
+			return res.status(400).send('Board is not ongoing');
+		}
 
 		if (existingPixel) {
 			return res.status(400).send('Pixel already exists');
@@ -27,6 +37,7 @@ pixelRouter.post('/create', async (req, res) => {
 			update_number: 1,
 		});
 		await newPixel.save();
+		await updateUserContributions(req.body.created_by, newPixel.board_id);
 		return res.status(201).send('Pixel created');
 	} catch (error) {
 		return res.status(500).send(`There was a problem creating the pixel: ${error}`);
@@ -35,7 +46,8 @@ pixelRouter.post('/create', async (req, res) => {
 
 pixelRouter.get('/getBoard/:board_id', async (req, res) => {
 	try {
-		const pixels = await Pixel.find({ board_id: req.params.board_id });
+		const pixels = await Pixel.find({ board_id: req.params.board_id })
+			.populate('created_by', 'userName');
 		return res.status(200).send(pixels);
 	} catch (error) {
 		return res.status(500).send(`There was a problem getting the pixels: ${error}`);
@@ -45,6 +57,16 @@ pixelRouter.get('/getBoard/:board_id', async (req, res) => {
 pixelRouter.put('/:id/update', async (req, res) => {
 	try {
 		const pixel = await Pixel.findById(req.params.id);
+
+		const board = await Board.findById(pixel.board_id);
+		if (!board) {
+			return res.status(404).send('Board not found');
+		}
+
+		if (board.status !== 'ongoing' || board.end_date < Date.now()) {
+			return res.status(400).send('Board is not ongoing');
+		}
+
 		if (!pixel) {
 			return res.status(404).send('Pixel not found');
 		}

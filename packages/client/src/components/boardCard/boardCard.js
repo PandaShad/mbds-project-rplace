@@ -25,7 +25,7 @@ const BoardCard = ({ board }) => {
 			<Stack direction="row" mt={3} align="center">
 				<Badge colorScheme={statusColor}>{board.status}</Badge>
 				<Text>Dimensions: {board.dimension.width}x{board.dimension.height}</Text>
-				<Text ml="auto">Waiting time: {board.waiting_time} mins</Text>
+				<Text ml="auto">Waiting time: {board.waiting_time} seconds</Text>
 			</Stack>
 		</Box>
 	);

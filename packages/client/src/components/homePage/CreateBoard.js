@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import {
@@ -11,6 +12,7 @@ import {
 	InputRightElement,
 	IconButton,
 	Checkbox,
+	useToast,
 } from '@chakra-ui/react';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import DatePicker from 'react-datepicker';
@@ -31,6 +33,7 @@ const CreateBoard = ({ onClose }) => {
 		waitingTime: 30,
 		startDate: new Date(),
 	});
+	const toast = useToast();
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -77,11 +80,14 @@ const CreateBoard = ({ onClose }) => {
 		};
 
 		try {
-			const response = await axios.post(API_ROUTES.createBoard, boardData);
-			console.log('Board created:', response.data);
+			await axios.post(API_ROUTES.createBoard, boardData);
 			onClose();
 		} catch (error) {
-			console.error('Error creating board:', error);
+			toast({
+				title: 'Error',
+				description: error,
+				status: 'error',
+			});
 		}
 		onClose();
 	};

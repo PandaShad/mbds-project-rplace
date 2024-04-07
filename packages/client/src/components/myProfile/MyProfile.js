@@ -1,10 +1,8 @@
 /* eslint-disable max-len */
 /* eslint-disable no-underscore-dangle */
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import {
 	Box,
-	Button,
 	Flex,
 	Text,
 	Avatar,
@@ -20,18 +18,20 @@ import {
 	AccordionIcon,
 	Badge,
 } from '@chakra-ui/react';
-import { useAuth } from '../../providers/authProvider';
-import { fetchUserInfo, logoutUser } from '../../services/userService';
+import { fetchUserInfo } from '../../services/userService';
 import BoardCard from '../boardCard/boardCard';
+import { useAuth } from '../../providers/authProvider';
 
 const ProfilePage = () => {
 	const [userInfo, setUserInfo] = useState(null);
 	const [errorMessage, setErrorMessage] = useState('');
 
+	const { token } = useAuth();
+
 	useEffect(() => {
 		const getUserInfo = async () => {
 			try {
-				const userData = await fetchUserInfo();
+				const userData = await fetchUserInfo(token);
 				setUserInfo(userData);
 			} catch (error) {
 				setErrorMessage('Problème de récupération du profil utilisateur.');
@@ -39,16 +39,7 @@ const ProfilePage = () => {
 		};
 
 		getUserInfo();
-	}, []);
-
-	const { setToken } = useAuth();
-	const navigate = useNavigate();
-
-	const handleLogout = async () => {
-		await logoutUser();
-		setToken(null);
-		navigate('/login', { replace: true });
-	};
+	}, [token]);
 
 	if (errorMessage) {
 		return (
@@ -78,7 +69,6 @@ const ProfilePage = () => {
 			<Heading as="h2" size="xl" mt={5} mb={2}>{userInfo.userName}</Heading>
 			<Text fontSize="lg">{userInfo.email}</Text>
 			<Badge colorScheme="purple" variant="subtle" fontSize="lg">Total de pixels ajoutés: {totalPixels}</Badge>
-			<Button colorScheme="red" onClick={handleLogout} m={3}>Logout</Button>
 
 			<Accordion allowToggle w="full" mt={10}>
 				<AccordionItem>
