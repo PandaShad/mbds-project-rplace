@@ -5,17 +5,18 @@ import {
 	Box,
 	Container,
 	Heading,
-	Link,
 	Spinner,
-	SimpleGrid,
 	Flex,
 	Button,
 	useToast,
+	Stack,
 } from '@chakra-ui/react';
 import { useNavigate } from 'react-router-dom';
 import CreateBoard from './CreateBoard';
 import { useAuth } from '../../providers/authProvider';
+import CardBoard from './CardBoard';
 
+/*
 const mockOngoingBoards = [
 	{ id: 1, name: 'Ongoing Board 1' },
 	{ id: 2, name: 'Ongoing Board 2' },
@@ -26,12 +27,13 @@ const mockFinishedBoards = [
 	{ id: 4, name: 'Finished Board 1' },
 	{ id: 5, name: 'Finished Board 2' },
 	{ id: 6, name: 'Finished Board 3' },
-];
+];*/
 
 const HomePage = () => {
 	const toast = useToast();
 	const [ongoingBoards, setOngoingBoards] = useState([]);
 	const [finishedBoards, setFinishedBoards] = useState([]);
+	const [upcomingBoards, setUpcomingBoards] = useState([]);
 	const [loading, setLoading] = useState(true);
 	const [userCount, setUserCount] = useState(0);
 
@@ -44,7 +46,7 @@ const HomePage = () => {
 				setOngoingBoards(response.data);
 			} catch (error) {
 				toast({
-					title: 'Error Loading',
+					title: 'Error Loading ongoing boards',
 					description: error.message,
 					status: 'error',
 					duration: 5000,
@@ -61,7 +63,7 @@ const HomePage = () => {
 				setFinishedBoards(response.data);
 			} catch (error) {
 				toast({
-					title: 'Error Loading',
+					title: 'Error Loading finished boards',
 					description: error.message,
 					status: 'error',
 					duration: 5000,
@@ -78,7 +80,24 @@ const HomePage = () => {
 				setUserCount(response.data.count);
 			} catch (error) {
 				toast({
-					title: 'Error Loading',
+					title: 'Error Loading user count',
+					description: error.message,
+					status: 'error',
+					duration: 5000,
+					isClosable: true,
+				});
+			}
+		};
+
+		const fetchUpcomingBoards = async () => {
+			try {
+				const response = await axios.get(
+					'http://localhost:8000/api/board/list-upcoming',
+				);
+				setUpcomingBoards(response.data);
+			} catch (error) {
+				toast({
+					title: 'Error Loading upcoming boards',
 					description: error.message,
 					status: 'error',
 					duration: 5000,
@@ -91,6 +110,7 @@ const HomePage = () => {
 			setLoading(true);
 			await fetchOngoingBoards();
 			await fetchFinishedBoards();
+			await fetchUpcomingBoards();
 			await fetchCountUsers();
 			setLoading(false);
 		};
@@ -100,13 +120,13 @@ const HomePage = () => {
 
 	const [showCreateForm, setShowCreateForm] = useState(false);
 
-	const { user } = useAuth();
+	const { token } = useAuth();
 
 	const useCreateBoardNavigation = () => {
 		const navigate = useNavigate();
 
 		const handleCreateBoard = () => {
-			if (!user) {
+			if (token) {
 				setShowCreateForm(true);
 			} else {
 				toast({
@@ -129,16 +149,59 @@ const HomePage = () => {
 		setShowCreateForm(false);
 	};
 
+	const calculateTimeRemaining = (endDate) => {
+		const currentTime = new Date();
+		const endDateTime = new Date(endDate);
+		const difference = endDateTime.getTime() - currentTime.getTime();
+
+		if (difference <= 0) {
+			return 'Expired';
+		}
+
+		const seconds = Math.floor(difference / 1000);
+		const days = Math.floor(seconds / (24 * 60 * 60));
+		const hours = Math.floor((seconds % (24 * 60 * 60)) / (60 * 60));
+		const minutes = Math.floor((seconds % (60 * 60)) / 60);
+		const remainingSeconds = seconds % 60;
+
+		const remainingTime = [];
+		if (days > 0) {
+			remainingTime.push(`${days} days`);
+		}
+		if (hours > 0) {
+			remainingTime.push(`${hours} hours`);
+		}
+		if (minutes > 0) {
+			remainingTime.push(`${minutes} minutes`);
+		}
+		if (remainingSeconds > 0) {
+			remainingTime.push(`${remainingSeconds} seconds`);
+		}
+
+		return `${remainingTime.join(' ')} remaining`;
+	};
+
+	useEffect(() => {
+		const interval = setInterval(() => {
+			setOngoingBoards((prevBoards) => prevBoards.map((board) => ({
+				...board,
+				timeRemaining: calculateTimeRemaining(board.end_date),
+			})));
+		}, 1000);
+
+		return () => clearInterval(interval);
+	}, []);
+
 	return (
 		<Container
-			maxW="lg"
+			maxW="full"
 			py={{ base: '12', md: '24' }}
 			px={{ base: '0', sm: '8' }}
 		>
 			<Heading as="h1" size="lg" textAlign="center" mb="8">
 				Welcome to PixelBoard!
 			</Heading>
-			<Box mb="8">
+			<Box mb="8" border="1px solid #E2E8F0" borderRadius="lg" p="4">
 				<Flex alignItems="center" mb="4">
 					<Heading as="h2" size="md" mr="2">
 						Registered Users - {userCount}
@@ -146,57 +209,59 @@ const HomePage = () => {
 					{loading && <Spinner size="lg" />}
 				</Flex>
 			</Box>
-			<Box mb="8">
+			<Box mb="8" border="1px solid #E2E8F0" borderRadius="lg" p="4">
 				<Flex alignItems="center" mb="4">
-					<Heading as="h2" size="md" mr="2">
+					<Heading as="h2" size="lg" mb="4">
 						Ongoing Boards - {ongoingBoards.length}
 					</Heading>
 					{loading && <Spinner size="lg" />}
 				</Flex>
-				{loading ? (
-					mockOngoingBoards.map((board) => (
-						<Link key={board.id} href="#">
-							{board.name}
-						</Link>
-					))
-				) : (
-					<SimpleGrid columns={1} spacing={2}>
-						{ongoingBoards.map((board) => (
-							<Link
-								key={board.id}
-								href={`/pixelboard/${board.id}`}
-							>
-								{board.name}
-							</Link>
-						))}
-					</SimpleGrid>
-				)}
+				<Stack direction="horizontal" overflowX="auto">
+					{ongoingBoards.map((board) => (
+						<CardBoard
+							key={board.id}
+							title={board.title}
+							description={board.description}
+							timeRemaining={calculateTimeRemaining(board.end_date)}
+						/>
+					))}
+				</Stack>
 			</Box>
-			<Box mb="8">
+			<Box mb="8" border="1px solid #E2E8F0" borderRadius="lg" p="4">
 				<Flex alignItems="center" mb="4">
-					<Heading as="h2" size="md" mr="2">
+					<Heading as="h2" size="lg" mb="4">
 						Finished Boards - {finishedBoards.length}
 					</Heading>
 					{loading && <Spinner size="lg" />}
 				</Flex>
-				{loading ? (
-					mockFinishedBoards.map((board) => (
-						<Link key={board.id} href="#">
-							{board.name}
-						</Link>
-					))
-				) : (
-					<SimpleGrid columns={1} spacing={2}>
-						{finishedBoards.map((board) => (
-							<Link
-								key={board.id}
-								href={`/pixelboard/${board.id}`}
-							>
-								{board.name}
-							</Link>
-						))}
-					</SimpleGrid>
-				)}
+				<Stack direction="horizontal" overflowX="auto" flexWrap="nowrap" spacing="4">
+					{finishedBoards.map((board) => (
+						<CardBoard
+							key={board.id}
+							title={board.title}
+							description={board.description}
+							timeRemaining={calculateTimeRemaining(board.end_date)}
+						/>
+					))}
+				</Stack>
+			</Box>
+			<Box mb="8" border="1px solid #E2E8F0" borderRadius="lg" p="4">
+				<Flex alignItems="center" mb="4">
+					<Heading as="h2" size="lg" mb="4">
+						Upcoming Boards - {upcomingBoards.length}
+					</Heading>
+					{loading && <Spinner size="lg" />}
+				</Flex>
+				<Stack direction="horizontal" overflowX="auto">
+					{upcomingBoards.map((board) => (
+						<CardBoard
+							key={board.id}
+							title={board.title}
+							description={board.description}
+							timeRemaining={calculateTimeRemaining(board.end_date)}
+						/>
+					))}
+				</Stack>
 			</Box>
 			<Button
 				colorScheme="teal"
