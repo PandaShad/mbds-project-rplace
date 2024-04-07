@@ -113,7 +113,7 @@ export default function SignUpPage() {
 									type="text"
 									focusBorderColor="teal.500"
 									borderRadius="md"
-									onAbort={(e) => setFirstName(e.target.value)}
+									onChange={(e) => setFirstName(e.target.value)}
 								/>
 							</FormControl>
 

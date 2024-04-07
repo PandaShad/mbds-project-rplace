@@ -1,6 +1,7 @@
 const { Router, json, urlencoded } = require('express');
 const Pixel = require('../models/pixel.model');
 const { updateUserContributions } = require('../services/user.service');
+const { getIO } = require('../socket');
 
 const pixelRouter = Router();
 pixelRouter.use(json());
@@ -27,6 +28,9 @@ pixelRouter.post('/create', async (req, res) => {
 			update_number: 1,
 		});
 		await newPixel.save();
+		await updateUserContributions(req.body.created_by, newPixel.board_id);
+		const io = getIO();
+		io.emit('pixel created', newPixel);
 		return res.status(201).send('Pixel created');
 	} catch (error) {
 		return res.status(500).send(`There was a problem creating the pixel: ${error}`);
@@ -53,6 +57,8 @@ pixelRouter.put('/:id/update', async (req, res) => {
 		pixel.last_update = Date.now();
 		pixel.update_number += 1;
 		await pixel.save();
+		const io = getIO();
+		io.emit('pixel updated', pixel);
 		await updateUserContributions(req.body.created_by, pixel.board_id);
 		return res.status(200).send('Pixel updated');
 	} catch (error) {

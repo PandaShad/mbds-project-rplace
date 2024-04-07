@@ -4,6 +4,7 @@ import MyProfile from '../components/myProfile/MyProfile';
 import SignUpPage from '../components/signUp/SignUp';
 import { ProtectedRoute } from './ProtectedRoute';
 import { PublicRoute } from './PublicRoute';
+import Board from '../components/boardPage/Board';
 
 const Routes = () => {
 	const routesForNotAuthenticatedOnly = [
@@ -36,9 +37,22 @@ const Routes = () => {
 		},
 	];
 
+	const routesForEveryOne = [
+		{
+			path: '/',
+			children: [
+				{
+					path: '/board/:id',
+					element: <Board />,
+				},
+			],
+		},
+	];
+
 	const router = createBrowserRouter([
 		...routesForNotAuthenticatedOnly,
 		...routesForAuthenticatedOnly,
+		...routesForEveryOne,
 	]);
 
 	return <RouterProvider router={router} />;
