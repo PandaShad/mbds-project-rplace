@@ -170,14 +170,8 @@ const HomePage = () => {
 						<CardBoard
 							// eslint-disable-next-line no-underscore-dangle
 							key={board._id}
-							// eslint-disable-next-line no-underscore-dangle
-							id={board._id}
-							title={board.title}
-							description={board.description}
+							board={board}
 							timeRemaining={calculateTimeRemaining(board.end_date)}
-							width={board.dimension.width}
-							height={board.dimension.height}
-							waitingTime={board.waiting_time}
 						/>
 					))}
 				</Stack>
@@ -194,14 +188,8 @@ const HomePage = () => {
 						<CardBoard
 							// eslint-disable-next-line no-underscore-dangle
 							key={board._id}
-							// eslint-disable-next-line no-underscore-dangle
-							id={board._id}
-							title={board.title}
-							description={board.description}
+							board={board}
 							timeRemaining={calculateTimeRemaining(board.end_date)}
-							width={board.dimension.width}
-							height={board.dimension.height}
-							waitingTime={board.waiting_time}
 						/>
 					))}
 				</Stack>
@@ -218,14 +206,8 @@ const HomePage = () => {
 						<CardBoard
 							// eslint-disable-next-line no-underscore-dangle
 							key={board._id}
-							// eslint-disable-next-line no-underscore-dangle
-							id={board._id}
-							title={board.title}
-							description={board.description}
+							board={board}
 							timeRemaining={calculateTimeRemaining(board.end_date)}
-							width={board.dimension.width}
-							height={board.dimension.height}
-							waitingTime={board.waiting_time}
 						/>
 					))}
 				</Stack>
