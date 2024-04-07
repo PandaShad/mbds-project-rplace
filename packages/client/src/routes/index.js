@@ -60,7 +60,8 @@ const Routes = () => {
 		...routesForEveryOne,
 	]);
 
-	return <RouterProvider router={router} />;
+	return (
+		<RouterProvider router={router} />);
 };
 
 export default Routes;
