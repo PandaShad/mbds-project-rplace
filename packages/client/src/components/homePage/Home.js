@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom';
 import CreateBoard from './CreateBoard';
 import { useAuth } from '../../providers/authProvider';
 import CardBoard from './CardBoard';
+import { API_ROUTES } from '../../utils/apiRoutes';
 
 /*
 const mockOngoingBoards = [
@@ -41,7 +42,7 @@ const HomePage = () => {
 		const fetchOngoingBoards = async () => {
 			try {
 				const response = await axios.get(
-					'http://localhost:8000/api/board/list-ongoing',
+					API_ROUTES.listOngoingBoards,
 				);
 				setOngoingBoards(response.data);
 			} catch (error) {
@@ -58,7 +59,7 @@ const HomePage = () => {
 		const fetchFinishedBoards = async () => {
 			try {
 				const response = await axios.get(
-					'http://localhost:8000/api/board/list-finished',
+					API_ROUTES.listFinishedBoards,
 				);
 				setFinishedBoards(response.data);
 			} catch (error) {
@@ -75,7 +76,7 @@ const HomePage = () => {
 		const fetchCountUsers = async () => {
 			try {
 				const response = await axios.get(
-					'http://localhost:8000/api/auth/count',
+					API_ROUTES.countUsers,
 				);
 				setUserCount(response.data.count);
 			} catch (error) {
@@ -92,7 +93,7 @@ const HomePage = () => {
 		const fetchUpcomingBoards = async () => {
 			try {
 				const response = await axios.get(
-					'http://localhost:8000/api/board/list-upcoming',
+					API_ROUTES.listUpcomingBoards,
 				);
 				setUpcomingBoards(response.data);
 			} catch (error) {

@@ -19,6 +19,7 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { AddIcon, MinusIcon } from '@chakra-ui/icons';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import axios from 'axios';
+import { API_ROUTES } from '../../utils/apiRoutes';
 
 const CreateBoard = ({ onClose }) => {
 	const [formData, setFormData] = useState({
@@ -58,7 +59,7 @@ const CreateBoard = ({ onClose }) => {
 		if (formData.endDate < new Date()) {
 			status = 'finished';
 		}
-		const user = await axios.get('http://localhost:8000/api/auth/me');
+		const user = await axios.get(API_ROUTES.me);
 		const boardData	= {
 			title: formData.title,
 			override: formData.override,
@@ -74,11 +75,10 @@ const CreateBoard = ({ onClose }) => {
 			// eslint-disable-next-line no-underscore-dangle
 			created_by: user.data._id,
 		};
-		console.log(boardData);
 
 		try {
-			const response = await axios.post('http://localhost:8000/api/board/create', boardData);
-			console.log(response.data);
+			const response = await axios.post(API_ROUTES.createBoard, boardData);
+			console.log('Board created:', response.data);
 			onClose();
 		} catch (error) {
 			console.error('Error creating board:', error);
