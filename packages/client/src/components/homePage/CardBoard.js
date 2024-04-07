@@ -1,5 +1,7 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import { useState, React } from 'react';
+import { useNavigate } from 'react-router-dom';
+// eslint-disable-next-line import/no-extraneous-dependencies
+import axios from 'axios';
 import {
 	Card,
 	CardHeader,
@@ -9,19 +11,76 @@ import {
 	Box,
 	Text,
 	StackDivider,
+	Modal,
+	ModalOverlay,
+	ModalContent,
+	ModalHeader,
+	ModalBody,
+	Button,
 } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
+import { API_ROUTES } from '../../utils/apiRoutes';
+import { isAdmin } from '../../services/authService';
+import UpdateBoard from './EditBoard';
 
 const CardBoard = ({
-	id, title, description, timeRemaining, width, height, waitingTime,
+	board, timeRemaining,
 }) => {
-	const dimensions = `${width}x${height}`;
+	const dimensions = `${board.dimension.width}x${board.dimension.height}`;
+
+	const editData = {
+		title: board.title,
+		description: board.description,
+		width: board.dimension.width,
+		height: board.dimension.height,
+		startDate: board.startDate,
+		endDate: board.endDate,
+		override: board.override,
+		waitingTime: board.waitingTime,
+	};
+
+	const navigate =	useNavigate();
+
+	const [showAdminOptions, setShowAdminOptions] = useState(false);
+	const [showEditForm, setShowEditForm] = useState(false);
+
+	const handleClick	= async () => {
+		const isUserAdmin = await isAdmin();
+
+		if (isUserAdmin) {
+			setShowAdminOptions(true);
+		} else	{
+			// eslint-disable-next-line no-underscore-dangle
+			navigate(`/board/${board._id}`);
+		}
+	};
+
+	const handleOpenBoard = () => {
+		// eslint-disable-next-line no-underscore-dangle
+		navigate(`/board/${board._id}`);
+	};
+
+	const handleEditBoard = () => {
+		setShowEditForm(true);
+		setShowAdminOptions(false);
+	};
+
+	const handleDeleteBoard = async () => {
+		// eslint-disable-next-line no-underscore-dangle
+		await axios.delete(API_ROUTES.deleteBoard(board._id));
+		setShowAdminOptions(false);
+	};
+
+	const handleCloseEditForm = () => {
+		setShowEditForm(false);
+		navigate('/home');
+	};
 
 	return (
-		<Link to={`/board/${id}`}>
+		<Box onClick={handleClick}>
 			<Card width="400px">
 				<CardHeader bg="teal" color="white">
-					<Heading size="md">{title}</Heading>
+					<Heading size="md">{board.title}</Heading>
 				</CardHeader>
 
 				<CardBody>
@@ -31,7 +90,7 @@ const CardBoard = ({
 								Description
 							</Heading>
 							<Text fontSize="sm">
-								{description}
+								{board.description}
 							</Text>
 						</Box>
 						<Box>
@@ -42,7 +101,7 @@ const CardBoard = ({
 								Dimensions: {dimensions}
 							</Text>
 							<Text fontSize="sm">
-								Waiting Time: {waitingTime} minutes
+								Waiting Time: {board.waitingTime} minutes
 							</Text>
 						</Box>
 						<Box>
@@ -54,20 +113,56 @@ const CardBoard = ({
 							</Text>
 						</Box>
 					</Stack>
+					{isAdmin && (
+						<Modal isOpen={showAdminOptions} onClose={() => setShowAdminOptions(false)}>
+							<ModalOverlay />
+							<ModalContent>
+								<ModalHeader>Admin Options</ModalHeader>
+								<ModalBody>
+									<Stack spacing="4">
+										<Button onClick={handleOpenBoard} variant="outline">Open Board</Button>
+										<Button onClick={handleEditBoard} variant="outline">Edit Board</Button>
+										<Button onClick={handleDeleteBoard} variant="outline">Delete Board</Button>
+									</Stack>
+								</ModalBody>
+							</ModalContent>
+						</Modal>
+					)}
+					<Modal isOpen={showEditForm} onClose={handleCloseEditForm}>
+						<ModalOverlay />
+						<ModalContent>
+							<ModalHeader>Edit Board</ModalHeader>
+							<ModalBody>
+								<UpdateBoard
+									onClose={handleCloseEditForm}
+									defaultFields={editData}
+									// eslint-disable-next-line no-underscore-dangle
+									id={board._id}
+								/>
+							</ModalBody>
+						</ModalContent>
+					</Modal>
 				</CardBody>
 			</Card>
-		</Link>
+		</Box>
 	);
 };
 
 CardBoard.propTypes = {
-	id: PropTypes.string.isRequired,
-	title: PropTypes.string.isRequired,
-	description: PropTypes.string.isRequired,
+	board: PropTypes.shape({
+		_id: PropTypes.string,
+		title: PropTypes.string,
+		description: PropTypes.string,
+		dimension: PropTypes.shape({
+			width: PropTypes.number,
+			height: PropTypes.number,
+		}),
+		startDate: PropTypes.instanceOf(Date),
+		endDate: PropTypes.instanceOf(Date),
+		override: PropTypes.bool,
+		waitingTime: PropTypes.number,
+	}).isRequired,
 	timeRemaining: PropTypes.string.isRequired,
-	width: PropTypes.number.isRequired,
-	height: PropTypes.number.isRequired,
-	waitingTime: PropTypes.number.isRequired,
 };
 
 export default CardBoard;
