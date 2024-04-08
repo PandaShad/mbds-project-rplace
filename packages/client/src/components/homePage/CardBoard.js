@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable import/no-extraneous-dependencies */
 import { useState, React } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -46,18 +47,20 @@ const CardBoard = ({
 	const [showEditForm, setShowEditForm] = useState(false);
 
 	const handleClick	= async () => {
-		const isUserAdmin = await isAdmin();
+		try {
+			const isUserAdmin = await isAdmin();
 
-		if (isUserAdmin) {
-			setShowAdminOptions(true);
-		} else	{
-			// eslint-disable-next-line no-underscore-dangle
+			if (isUserAdmin) {
+				setShowAdminOptions(true);
+			} else	{
+				navigate(`/board/${board._id}`);
+			}
+		} catch (error) {
 			navigate(`/board/${board._id}`);
 		}
 	};
 
 	const handleOpenBoard = () => {
-		// eslint-disable-next-line no-underscore-dangle
 		navigate(`/board/${board._id}`);
 	};
 
