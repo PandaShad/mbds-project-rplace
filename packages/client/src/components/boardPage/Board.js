@@ -17,6 +17,7 @@ import { usePixelByBoard } from '../../hooks/usePixelByBoard';
 import { createPixel, updatePixel } from '../../services/pixelService';
 import { useAuth } from '../../providers/authProvider';
 import { useWebSocket } from '../../hooks/useWebSocket';
+import ProgressBar from './ProgressBar';
 
 export default function Board() {
 	const { id } = useParams();
@@ -31,6 +32,9 @@ export default function Board() {
 	const [showTooltip, setShowTooltip] = useState(false);
 	const [tooltipPosition, setTooltipPosition] = useState({ x: 0, y: 0 });
 	const [tooltipData, setTooltipData] = useState(null);
+
+	const [canPlacePixel, setCanPlacePixel] = useState(true);
+	const [progressBarVisible, setProgressBarVisible] = useState(false);
 
 	const canvasRef = useRef(null);
 
@@ -116,7 +120,23 @@ export default function Board() {
 						color: selectedColor,
 						created_by: (currentUser ? currentUser._id : 'anonymous'),
 					};
-					await updatePixel(pixel._id, data);
+					if (canPlacePixel) {
+						setCanPlacePixel(false);
+						setProgressBarVisible(true);
+						await updatePixel(pixel._id, data);
+						setTimeout(() => {
+							setProgressBarVisible(false);
+							setCanPlacePixel(true);
+						}, board.waiting_time * 1000);
+					} else {
+						toast({
+							title: 'Error',
+							description: 'You must wait before placing another pixel',
+							status: 'error',
+							duration: 5000,
+							isClosable: true,
+						});
+					}
 				} catch (error) {
 					toast({
 						title: 'Error',
@@ -143,7 +163,23 @@ export default function Board() {
 					color: selectedColor,
 					created_by: (currentUser ? currentUser._id : 'anonymous'),
 				};
-				await createPixel(data);
+				if (canPlacePixel) {
+					setCanPlacePixel(false);
+					setProgressBarVisible(true);
+					await createPixel(data);
+					setTimeout(() => {
+						setProgressBarVisible(false);
+						setCanPlacePixel(true);
+					}, board.waiting_time * 1000);
+				} else {
+					toast({
+						title: 'Error',
+						description: 'You must wait before placing another pixel',
+						status: 'error',
+						duration: 5000,
+						isClosable: true,
+					});
+				}
 			} catch (error) {
 				toast({
 					title: 'Error',
@@ -179,6 +215,8 @@ export default function Board() {
 					</Text>
 
 					<CountDownEndDate endDate={board.end_date} />
+
+					{progressBarVisible && <ProgressBar waitingTime={board.waiting_time} />}
 
 				</Stack>
 
