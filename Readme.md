@@ -5,6 +5,9 @@ this is a mono-repo project for the 2024 MBDS project PixelBoard. It contains th
 - `client`: the frontend of the project
 - `api`: the backend of the project
 
+## Youtube demo
+[Video demo](https://www.youtube.com/watch?v=hN8NEDMhAYI)
+
 
 ## Installation
 To install the project, you need to clone the repository and install the dependencies. You can do this by running the following commands in the root directory of the project:
